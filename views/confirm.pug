@@ -10,19 +10,19 @@ html(lang="en")
       include _share/navbar.pug
 
     div
-      p 部屋を新規作成しました。
+      p ログインに成功しました
       div
         p 部屋名
-        p #{doc.roomName}
+        p #{roomName}
       div
         p ルームID
-        p #{doc.roomId}
+        p #{roomId}
       div
         p パスワード
-        p #{doc.roomPassword}
-      form(action=`./room/${doc.roomId}&${doc.roomPassword}`, method="post")
-        input(type="hidden" name="roomName" value=doc.roomName )
-        input(type="hidden" name="roomId" value=doc.roomId )
-        input(type="hidden" name="roomPassword" value=doc.roomPassword )
+        p #{roomPassword}
+      form(action=`/room/${roomId}&${roomPassword}`, method="post")
+        input(type="hidden" name="roomName" value=roomName )
+        input(type="hidden" name="roomId" value=roomId )
+        input(type="hidden" name="roomPassword" value=roomPassword )
         input(type="submit" value="入室する" )
       include _share/javascripts.pug

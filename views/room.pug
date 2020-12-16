@@ -9,6 +9,18 @@ html(lang="en")
     div
       include _share/navbar.pug
 
-      p room です
+    div 
+      b 部屋名 #{roomName} 
+      br
+      b ルームID #{roomId}
+      br
+      b パスワード #{roomPassword}
+      br
+
+    div
+      each message in messages
+        div
+          p #{message.message}
+          p #{message.createdDay}
       
       include _share/javascripts.pug
