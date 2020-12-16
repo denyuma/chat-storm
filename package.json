@@ -1,0 +1,14 @@
+{
+  "name": "chat-storm",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "gulp": "gulp",
+    "build-dev": "export NODE_ENV=development && gulp",
+    "build-prod": "export NODE_ENV=production && gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/denyuma/chat-storm.git",
+  "author": "necolin",
+  "license": "MIT"
+}
