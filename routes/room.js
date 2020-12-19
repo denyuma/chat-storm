@@ -4,14 +4,14 @@ const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.
 const MongoClient = require('mongodb').MongoClient;
 
 
-router.post('/:roomId&:roomPassword', (req, res) => {
+router.get('/', (req, res) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+    
     const db = client.db(DATABASE);
 
-    const roomName = req.body.roomName;
-    const roomId = req.body.roomId;
-    const roomPassword = req.body.roomPassword;
-
+    const roomName = req.query.roomName;
+    const roomId = req.query.roomId;
+    const roomPassword = req.query.roomPassword;
 
     const query = { roomId: { $eq: roomId } };
 
@@ -19,7 +19,6 @@ router.post('/:roomId&:roomPassword', (req, res) => {
       .find(query)
       .toArray()
       .then((messages) => {
-        console.log(messages);
         res.render('./room.pug', {
           messages: messages,
           roomName: roomName,
@@ -31,6 +30,34 @@ router.post('/:roomId&:roomPassword', (req, res) => {
       }).then(() => {
         client.close();
       });
+  });
+});
+
+router.post('/', (req, res) => {
+  MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+    const db = client.db(DATABASE);
+
+    const roomName = req.body.roomName;
+    const roomId = req.body.roomId;
+    const roomPassword = req.body.roomPassword;
+    const message = req.body.message;
+
+    // メッセージを表示してリダイレクトをする
+
+    Promise.all([
+      db.collection('messages').insertOne({
+        roomId: roomId,
+        message: message,
+        username: 'test-user', //要修正
+        createdDate: new Date()
+      })
+    ]).then(() => {
+      res.redirect(`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`);
+    }).catch(error => {
+      throw error;
+    }).then(() => {
+      client.close();
+    });
   });
 });
 

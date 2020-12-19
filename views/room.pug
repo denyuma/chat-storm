@@ -17,10 +17,19 @@ html(lang="en")
       b パスワード #{roomPassword}
       br
 
+    
     div
       each message in messages
         div
           p #{message.message}
-          p #{message.createdDay}
+          p #{message.createdDate}
+
+    div
+      form(action=`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`, method="post")
+        input(type="hidden" name="roomId" value=`${roomId}` )
+        input(type="hidden" name="roomPassword" value=`${roomPassword}` )
+        input(type="hidden" name="roomName" value=`${roomName}` )
+        textarea(name="message", cols="30", rows="10")
+        input(type="submit", value="書き込み")
       
       include _share/javascripts.pug

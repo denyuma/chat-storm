@@ -20,9 +20,10 @@ html(lang="en")
       div
         p パスワード
         p #{doc.roomPassword}
-      form(action=`./room/${doc.roomId}&${doc.roomPassword}`, method="post")
+      form(action=`/room/${roomId}&${roomPassword}`, method="get")
         input(type="hidden" name="roomName" value=doc.roomName )
         input(type="hidden" name="roomId" value=doc.roomId )
         input(type="hidden" name="roomPassword" value=doc.roomPassword )
         input(type="submit" value="入室する" )
       include _share/javascripts.pug
+      

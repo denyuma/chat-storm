@@ -21,7 +21,7 @@ html(lang="en")
       div
         p 部屋を新規作成する
         p (ルームIDとパスワードが発行されます)
-        form(action="./newroom", method="post")
+        form(action="/newroom", method="post")
           input(type="text" name="roomName" id="roomName")
           br
           input(type="submit", value="新規作成")

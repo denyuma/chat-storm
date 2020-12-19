@@ -20,7 +20,7 @@ html(lang="en")
       div
         p パスワード
         p #{roomPassword}
-      form(action=`/room/${roomId}&${roomPassword}`, method="post")
+      form(action=`/room`, method="get")
         input(type="hidden" name="roomName" value=roomName )
         input(type="hidden" name="roomId" value=roomId )
         input(type="hidden" name="roomPassword" value=roomPassword )

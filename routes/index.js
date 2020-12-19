@@ -22,10 +22,9 @@ router.post('/', (req, res) => {
       .toArray()
       .then((docs) => {
         if (docs) {
-          console.log(docs);
           const roomName = docs[0].roomName;
-          // const roomId = docs[0].roomId;
-          // const roomPassword = docs[0].roomPassword;
+          const roomId = docs[0].roomId;
+          const roomPassword = docs[0].roomPassword;
           
 
           // const messagequery = { roomId: { $eq: roomId } };

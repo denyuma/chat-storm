@@ -20,7 +20,6 @@ router.post('/', (req, res, next) => {
       roomId: roomId,
       roomPassword: roomPassword
     }).then((doc) => {
-      console.log(doc);
       res.render('./newroom.pug', {doc: doc.ops[0]});
     }).catch((error) => {
       throw error;
