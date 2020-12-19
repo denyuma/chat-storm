@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   res.render('./index.pug');
 });
 
-router.post('/', (req, res) => {
+router.post('/confirm', (req, res) => {
 
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
