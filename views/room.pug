@@ -18,18 +18,24 @@ html(lang="en")
       br
 
     
-    div
+    div(id="messages")
       each message in messages
         div
           p #{message.message}
           p #{message.createdDate}
 
+    //- div
+    //-   form(action=`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`, method="post")
+    //-     input(type="hidden" name="roomId" value=`${roomId}` )
+    //-     input(type="hidden" name="roomPassword" value=`${roomPassword}` )
+    //-     input(type="hidden" name="roomName" value=`${roomName}` )
+    //-     textarea(name="message", cols="30", rows="10")
+    //-     input(type="submit", value="書き込み") 
+    
     div
-      form(action=`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`, method="post")
-        input(type="hidden" name="roomId" value=`${roomId}` )
-        input(type="hidden" name="roomPassword" value=`${roomPassword}` )
-        input(type="hidden" name="roomName" value=`${roomName}` )
-        textarea(name="message", cols="30", rows="10")
-        input(type="submit", value="書き込み")
+      textarea(id="message", cols="30", rows="10" )
+      button
       
-      include _share/javascripts.pug
+    include _share/javascripts.pug
+
+  script(src="../public/source/javascripts/post.js")

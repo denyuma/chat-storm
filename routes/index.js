@@ -21,24 +21,12 @@ router.post('/confirm', (req, res) => {
       .find(query)
       .toArray()
       .then((docs) => {
-        if (docs) {
+        console.log(docs);
+        if (docs.length > 0) {
           const roomName = docs[0].roomName;
           const roomId = docs[0].roomId;
           const roomPassword = docs[0].roomPassword;
-          
-
-          // const messagequery = { roomId: { $eq: roomId } };
-
-          // db.collection('messages')
-          //   .findOne(messagequery)
-          //   .toArray()
-          //   .then((messages) => {
-          //     console.log(messages);
-          //   }).catch((error) => {
-          //     throw error;
-          //   }).then(() => {
-          //     client.close();
-          //   });
+        
           res.render('confirm.pug', {
             roomName: roomName,
             roomId: roomId,
