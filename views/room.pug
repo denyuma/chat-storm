@@ -18,7 +18,7 @@ html(lang="en")
       br
 
     
-    div(id="messages")
+    div(id="messages" data-js-selector="messages" )
       each message in messages
         div
           p #{message.message}
@@ -32,10 +32,16 @@ html(lang="en")
     //-     textarea(name="message", cols="30", rows="10")
     //-     input(type="submit", value="書き込み") 
     
-    div
-      textarea(id="message", cols="30", rows="10" )
-      button
+    form(id="messageform" data-js-selector="messageform" )
+      textarea(name="message", id="message" ,data-js-selector="message" , cols="30", rows="10")
+      button(
+        type="submit"
+        data-room-name=roomName
+        data-room-id=roomId
+        data-room-password=roomPassword
+      ).message-send-button 送信
       
     include _share/javascripts.pug
-
-  script(src="../public/source/javascripts/post.js")
+  script(src="/socket.io/socket.io.js")
+  script(src="https://code.jquery.com/jquery-3.4.1.min.js" ) 
+  script(src="/public/javascripts/client.js" type="module" )

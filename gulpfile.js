@@ -15,7 +15,7 @@ development = [
 production = [
   'copy-third_party',
   'copy-images',
-  'minify-javascripts',
+  'copy-javascripts',
   'compile-sass'
 ];
 

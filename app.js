@@ -23,9 +23,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
 
+// app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(__dirname + '/public/' + (process.env.NODE_ENV === 'development' ? 'development' : 'production')));
+// app.use('/public', express.static(__dirname + '/public/source/'));
 
 app.use(accessLogger());
 

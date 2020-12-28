@@ -36,10 +36,11 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
+    console.log('connect');
 
-    const roomName = req.body.roomName;
-    const roomId = req.body.roomId;
-    const roomPassword = req.body.roomPassword;
+    const roomName = req.body.roomName || req.query.roomName;
+    const roomId = req.body.roomId || req.query.roomId;
+    const roomPassword = req.body.roomPassword || req.query.roomPassword ;
     const message = req.body.message;
 
     // メッセージを表示してリダイレクトをする

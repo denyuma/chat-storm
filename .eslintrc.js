@@ -33,5 +33,8 @@ module.exports = {
     'no-console': [
       'off'
     ]
+  },
+  "parserOptions": {
+    "sourceType": "module"
   }
 };

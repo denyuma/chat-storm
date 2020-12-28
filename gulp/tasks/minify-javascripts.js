@@ -9,6 +9,6 @@ gulp.task('minify-javascripts.clean', () => {
 
 gulp.task('minify-javascripts', ['minify-javascripts.clean'], () => {
   return gulp.src('./javascripts/**/*.js', { cwd: config.path.input })
-    .pipe(uglify(config.uglify))
+    .pipe(uglify())
     .pipe(gulp.dest('./javascripts', { cwd: config.path.output }));
 });

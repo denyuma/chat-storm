@@ -5,8 +5,25 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('socket.io:server');
+var debug = require('debug')('chat-storm:server');
 var http = require('http');
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+const io = require('socket.io')(server);
+
+io.on('connection', (socket) => {
+  console.log('user on connect');
+  socket.on('post', (post) => {
+    console.log('post:' + JSON.stringify(post));
+    io.emit('post', post);
+  });
+});
+
 
 /**
  * Get port from environment and store in Express.
@@ -15,11 +32,7 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
 
-var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.

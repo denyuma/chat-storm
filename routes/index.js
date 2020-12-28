@@ -21,7 +21,6 @@ router.post('/confirm', (req, res) => {
       .find(query)
       .toArray()
       .then((docs) => {
-        console.log(docs);
         if (docs.length > 0) {
           const roomName = docs[0].roomName;
           const roomId = docs[0].roomId;
