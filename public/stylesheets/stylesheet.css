@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.item {
+  width: auto;
+  margin: 10px;
+  padding: 1px 10px 1px 10px ;
+  border: 2px;
+  background-color: chartreuse;
+}

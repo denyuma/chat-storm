@@ -9,7 +9,7 @@ html(lang="en")
     div
       include _share/navbar.pug
 
-    div 
+    div
       b 部屋名 #{roomName} 
       br
       b ルームID #{roomId}
@@ -18,10 +18,10 @@ html(lang="en")
       br
 
     
-    div(id="messages" data-js-selector="messages" )
+    div(id="messages" data-js-selector="messages" class="container" )
       if messages
         each message in messages
-          div
+          div(class="item")
             p #{message.message}
             p #{message.createdDate}
 

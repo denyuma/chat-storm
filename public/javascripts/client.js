@@ -7,7 +7,7 @@ $(() => {
   const $message = $('[data-js-selector=message]');
 
   socket.on('post', (post) => {
-    const text = `<div> <p>${post.text}</p> <p>${post.createdDate}</p> </div>`;
+    const text = `<div class="item" > <p>${post.text}</p> <p>${post.createdDate}</p> </div>`;
     $messages.append(text);
   });
 
@@ -19,11 +19,23 @@ $(() => {
       const roomId = button.data('room-id');
       const roomPassword = button.data('room-password');
       const message = $message.val();
-      console.log(message);
+      
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1);
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+      const second = date.getSeconds();
+
+      const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 
       $.post(
         `/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`,
-        { message: message }
+        {
+          message: message,
+          createdDate: createdDate
+        }
       );
     });
   });
@@ -32,9 +44,19 @@ $(() => {
   $messageform.submit((e) => {
     e.preventDefault();
 
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1);
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+
+    const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
+
     const post = {
       text: $message.val(),
-      createdDate: new Date().toISOString
+      createdDate: createdDate
     };
 
     socket.emit('post', post);

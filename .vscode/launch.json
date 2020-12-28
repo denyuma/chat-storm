@@ -11,10 +11,7 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}\\bin\\www.js",
-      "env": {
-        "NODE_ENV": "development"
-      }
+      "program": "${workspaceFolder}\\bin\\www.js"
     },
     {
       "type": "node",

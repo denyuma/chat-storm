@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+const moment = require('moment-timezone');
+
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
 
@@ -36,12 +38,12 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
-    console.log('connect');
 
-    const roomName = req.body.roomName || req.query.roomName;
-    const roomId = req.body.roomId || req.query.roomId;
-    const roomPassword = req.body.roomPassword || req.query.roomPassword ;
+    const roomName = req.query.roomName;
+    const roomId = req.query.roomId;
+    const roomPassword = req.query.roomPassword ;
     const message = req.body.message;
+    const createdDate = req.body.createdDate;
 
     // メッセージを表示してリダイレクトをする
 
@@ -50,7 +52,7 @@ router.post('/', (req, res) => {
         roomId: roomId,
         message: message,
         username: 'test-user', //要修正
-        createdDate: new Date().toISOString()
+        createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
       })
     ]).then(() => {
       res.redirect(`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`);
