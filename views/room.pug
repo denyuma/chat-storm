@@ -22,7 +22,7 @@ html(lang="en")
       if messages
         each message in messages
           div(class="item")
-            p #{message.message}
+            p(class="message") #{message.message}
             p #{message.createdDate}
 
     //- div
@@ -44,5 +44,7 @@ html(lang="en")
       
     include _share/javascripts.pug
   script(src="/socket.io/socket.io.js")
-  script(src="https://code.jquery.com/jquery-3.4.1.min.js" ) 
+  script(src="https://code.jquery.com/jquery-3.4.1.min.js" )
+  script(src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
   script(src="/public/javascripts/client.js" type="module" )
+  script(src="/public/javascripts/sort.js" type="module" )

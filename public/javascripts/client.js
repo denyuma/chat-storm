@@ -7,7 +7,7 @@ $(() => {
   const $message = $('[data-js-selector=message]');
 
   socket.on('post', (post) => {
-    const text = `<div class="item" > <p>${post.text}</p> <p>${post.createdDate}</p> </div>`;
+    const text = `<div class="item" > <p class="message" >${post.text}</p> <p>${post.createdDate}</p> </div>`;
     $messages.append(text);
   });
 
@@ -54,8 +54,10 @@ $(() => {
 
     const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 
+    const message = escape($message.val());
+
     const post = {
-      text: $message.val(),
+      text: message,
       createdDate: createdDate
     };
 
@@ -63,6 +65,16 @@ $(() => {
     $message.val('');
   });
 });
+
+function escape (str) {
+  str = str.replace(/&/g, '&amp;');
+  str = str.replace(/>/g, '&gt;');
+  str = str.replace(/</g, '&lt;');
+  str = str.replace(/"/g, '&quot;');
+  str = str.replace(/'/g, '&#x27;');
+  str = str.replace(/`/g, '&#x60;');
+  return str;
+}
 
 
 // const socket = io();

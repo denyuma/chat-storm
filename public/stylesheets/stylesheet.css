@@ -4,9 +4,15 @@
 }
 
 .item {
-  width: auto;
+  width: 200px;
+  height: 120px;
   margin: 10px;
   padding: 1px 10px 1px 10px ;
   border: 2px;
   background-color: chartreuse;
+}
+
+.message {
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
