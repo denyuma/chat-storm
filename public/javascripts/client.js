@@ -34,7 +34,7 @@ $(() => {
 
     const post = {
       text: $message.val(),
-      createdDate: new Date()
+      createdDate: new Date().toISOString
     };
 
     socket.emit('post', post);

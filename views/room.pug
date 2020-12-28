@@ -19,10 +19,11 @@ html(lang="en")
 
     
     div(id="messages" data-js-selector="messages" )
-      each message in messages
-        div
-          p #{message.message}
-          p #{message.createdDate}
+      if messages
+        each message in messages
+          div
+            p #{message.message}
+            p #{message.createdDate}
 
     //- div
     //-   form(action=`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`, method="post")
@@ -33,7 +34,7 @@ html(lang="en")
     //-     input(type="submit", value="書き込み") 
     
     form(id="messageform" data-js-selector="messageform" )
-      textarea(name="message", id="message" ,data-js-selector="message" , cols="30", rows="10")
+      textarea(name="message", id="message" ,data-js-selector="message" , cols="40", rows="4")
       button(
         type="submit"
         data-room-name=roomName

@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
         roomId: roomId,
         message: message,
         username: 'test-user', //要修正
-        createdDate: new Date()
+        createdDate: new Date().toISOString()
       })
     ]).then(() => {
       res.redirect(`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`);
