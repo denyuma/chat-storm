@@ -1,4 +1,7 @@
 'use strict';
+/**
+ * Module dependencies.
+ */
 const express = require('express');
 const app = express();
 
@@ -24,11 +27,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/public', express.static(__dirname + '/public/' + (process.env.NODE_ENV === 'development' ? 'development' : 'production')));
 app.use('/public', express.static(__dirname + '/public/'));
 
 app.use(accessLogger());
+
+/**
+ * rooting 
+ */
 
 app.use('/', require('./routes/index.js'));
 app.use('/newroom', require('./routes/newroom.js'));
@@ -52,6 +58,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-
-// app.listen(8000);
-// console.log('listening Port in 8000');

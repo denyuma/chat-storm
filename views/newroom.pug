@@ -1,29 +1,34 @@
 <!DOCTYPE html>
-html(lang="en")
+html(lang="ja")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     include _share/stylesheets.pug
     title chat-storm
   body
-    div
-      include _share/navbar.pug
+    include _share/navbar.pug
 
-    div
-      p 部屋を新規作成しました。
-      div
-        p 部屋名
-        p #{doc.roomName}
-      div
-        p ルームID
-        p #{doc.roomId}
-      div
-        p パスワード
-        p #{doc.roomPassword}
+    main(role="main" class="container")
+      h4.mt-5 部屋を新規作成しました。
+        //- div.card.bg-transparent
+        //-   ul.list-group
+        //-     li.list-group-item.bg-transparent 部屋名: #{doc.roomName}
+        //-     li.list-group-item.bg-transparent ルームID: #{doc.roomId}
+        //-     li.list-group-item.bg-transparent パスワード : #{doc.roomPassword}
+      table.my-3.table.table-bordered(class="confirm-table")
+        tr
+          td 部屋名
+          td #{roomName}
+        tr
+          td ルームID
+          td #{roomId}
+        tr
+          td パスワード
+          td #{roomPassword}
       form(action=`/room`, method="get")
-        input(type="hidden" name="roomName" value=doc.roomName )
-        input(type="hidden" name="roomId" value=doc.roomId )
-        input(type="hidden" name="roomPassword" value=doc.roomPassword )
-        input(type="submit" value="入室する" )
-      include _share/javascripts.pug
+        input(type="hidden" name="roomName" value=roomName )
+        input(type="hidden" name="roomId" value=roomId )
+        input(type="hidden" name="roomPassword" value=roomPassword )
+        input.btn.btn-primary(type="submit" value="入室する" )
+    include _share/javascripts.pug
       

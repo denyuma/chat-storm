@@ -14,12 +14,16 @@ var http = require('http');
 
 var server = http.createServer(app);
 
+/**
+ * Use socket.io. 
+ */
+
 const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
   console.log('user on connect');
   socket.on('post', (post) => {
-    console.log('post:' + JSON.stringify(post));
+    console.log('posted :' + JSON.stringify(post));
     io.emit('post', post);
   });
 });
@@ -31,8 +35,6 @@ io.on('connection', (socket) => {
 
 var port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
-
-
 
 /**
  * Listen on provided port, on all network interfaces.

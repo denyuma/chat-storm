@@ -1,29 +1,41 @@
 <!DOCTYPE html>
-html(lang="en")
+html(lang="ja")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     include _share/stylesheets.pug
     title chat-storm
   body
-    div
-      include _share/navbar.pug
+    include _share/navbar.pug
 
-      div
-        p 入室する
+    main(role="main" class="container")
+      div.card.my-5.bg-transparent.border-success.mb-3
+        h4.card-header.border-success ルームIDとパスワード入室する
         form(action="/confirm", method="post")
-          input(type="text" name="roomId" placeholder="ルームID" )
-          input(type="text" name="roomPassword" placeholder="パスワード")
-          input(type="submit" value="入室" )
-        if error
-          p #{error}
+          div.card-body
+            div.form-group.row
+              div.col-sm-3
+              label.col-sm-2.col-form-label(for="roomId") ルームID :
+              input.col-sm-4.form-control(type="text" name="roomId" id="roomId" )
+            div.form-group.row
+              div.col-sm-3
+              label.col-sm-2.col-form-label(for="roomPassword" ) パスワード :
+              input.col-sm-4.form-control(type="text" name="roomPassword" id="roomPassword" )
+            input.btn.btn-success(type="submit" value="入室" )
+        if errors
+          p #{errors.roomId}
+          p #{errors.roomPassword}
+          p #{errors.mistakeIdOrPass}
 
-      div
-        p 部屋を新規作成する
-        p (ルームIDとパスワードが発行されます)
+      div.card.my-5.bg-transparent.border-danger
+        div.card-header.border-danger
+          h4 部屋を新規作成する
+          h5 (IDとパスワードが発行されます)
         form(action="/newroom", method="post")
-          input(type="text" name="roomName" id="roomName")
-          br
-          input(type="submit", value="新規作成")
-      
-      include _share/javascripts.pug
+          div.card-body
+            div.col-sm-3
+            label.mb-2.col-form-label(for="roomName") 部屋名を入力してください :
+            input.form-control.offset-md-4.col-4(type="text" name="roomName" id="roomName" )
+          input.btn.btn-danger.mb-3(type="submit", value="新規作成")
+        
+    include _share/javascripts.pug
