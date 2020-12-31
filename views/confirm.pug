@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-html(lang="en")
+html(lang="ja")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
@@ -9,20 +9,23 @@ html(lang="en")
     div
       include _share/navbar.pug
 
-    div
-      p ログインに成功しました
-      div
-        p 部屋名
-        p #{roomName}
-      div
-        p ルームID
-        p #{roomId}
-      div
-        p パスワード
-        p #{roomPassword}
-      form(action=`/room`, method="get")
+    main(role="main" class="container")
+      h4.mt-5 入室に成功しました。
+      table.my-3.table.table-bordered(class="confirm-table")
+        tr
+          td 部屋名
+          td #{roomName}
+        tr
+          td ルームID
+          td #{roomId}
+        tr
+          td パスワード
+          td #{roomPassword}
+      form
         input(type="hidden" name="roomName" value=roomName )
         input(type="hidden" name="roomId" value=roomId )
         input(type="hidden" name="roomPassword" value=roomPassword )
-        input(type="submit" value="入室する" )
+        input.btn.btn-danger.mr-3(type="submit" value="戻る" data-method="post" data-action="/" )
+        input.btn.btn-success.ml-3(type="submit" value="入室する" data-method="get" data-action="/room" )
       include _share/javascripts.pug
+      script(src="/public/javascripts/confirm.js")

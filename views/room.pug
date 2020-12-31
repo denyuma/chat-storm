@@ -9,13 +9,19 @@ html(lang="en")
     div
       include _share/navbar.pug
 
-    div
-      b 部屋名 #{roomName} 
-      br
-      b ルームID #{roomId}
-      br
-      b パスワード #{roomPassword}
-      br
+    div(class="container")
+      a.btn.btn-success.my-4(data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse" ) 部屋情報
+      div.collapse.show#collapse
+        table.my-3.table.table-bordered(class="confirm-table")
+          tr
+            td 部屋名
+            td #{roomName}
+          tr
+            td ルームID
+            td #{roomId}
+          tr
+            td パスワード
+            td #{roomPassword}
 
     
     div(id="messages" data-js-selector="messages" class="items" )
@@ -24,14 +30,6 @@ html(lang="en")
           div(class="item")
             p(class="message") #{message.message}
             p #{message.createdDate}
-
-    //- div
-    //-   form(action=`/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`, method="post")
-    //-     input(type="hidden" name="roomId" value=`${roomId}` )
-    //-     input(type="hidden" name="roomPassword" value=`${roomPassword}` )
-    //-     input(type="hidden" name="roomName" value=`${roomName}` )
-    //-     textarea(name="message", cols="30", rows="10")
-    //-     input(type="submit", value="書き込み") 
     
     form(id="messageform" data-js-selector="messageform" )
       textarea(name="message", id="message" ,data-js-selector="message" , cols="40", rows="4")
