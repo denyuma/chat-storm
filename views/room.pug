@@ -10,7 +10,7 @@ html(lang="en")
       include _share/navbar.pug
 
     div(class="container")
-      a.btn.btn-success.my-4(data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse" ) 部屋情報
+      a.btn.btn-success.my-4(data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse" id="room-info" ) 部屋情報
       div.collapse.show#collapse
         table.my-3.table.table-bordered(class="confirm-table")
           tr
@@ -20,7 +20,7 @@ html(lang="en")
             td ルームID
             td #{roomId}
           tr
-            td パスワード
+            td ルームパスワード
             td #{roomPassword}
 
     
@@ -35,14 +35,15 @@ html(lang="en")
       textarea(name="message", id="message" ,data-js-selector="message" , cols="40", rows="4")
       button(
         type="submit"
+        class="message-send-button"
         data-room-name=roomName
         data-room-id=roomId
         data-room-password=roomPassword
-      ).message-send-button 送信
+      ).btn.btn-primary 送信
       
     include _share/javascripts.pug
   script(src="/socket.io/socket.io.js")
   script(src="https://code.jquery.com/jquery-3.4.1.min.js" )
   script(src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
-  script(src="/public/javascripts/client.js" type="module" )
+  script(src="/public/javascripts/room.js" type="module" )
   script(src="/public/javascripts/sort.js" type="module" )

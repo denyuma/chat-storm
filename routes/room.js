@@ -25,7 +25,8 @@ router.get('/', (req, res) => {
           messages: messages,
           roomName: roomName,
           roomId: roomId,
-          roomPassword: roomPassword
+          roomPassword: roomPassword,
+          isAuthenticated: req.isAuthenticated()
         });
       }).catch((error) => {
         throw error;
@@ -51,7 +52,7 @@ router.post('/', (req, res) => {
       db.collection('messages').insertOne({
         roomId: roomId,
         message: message,
-        username: 'test-user', //要修正
+        username: 'test-user', //todos
         createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
       })
     ]).then(() => {

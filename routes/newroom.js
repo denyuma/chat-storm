@@ -24,6 +24,7 @@ router.get('/', (req, res, next) => {
           roomName: roomName,
           roomId: roomId,
           roomPassword: roomPassword,
+          isAuthenticated: req.isAuthenticated()
         });
       }).catch((error) => {
         throw error;

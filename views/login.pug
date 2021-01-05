@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    include _share/stylesheets.pug
+    title chat-storm
+  body
+    include _share/navbar.pug
+
+    main(role="main" class="container")
+      div.card.my-5.bg-transparent.border-success.mb-3
+        h4.card-header.border-success ログイン
+        form(action="/account/login", method="post")
+          div.card-body
+            div.form-group.row
+              div.col-sm-3
+              label.col-sm-2.col-form-label(for="userId") ユーザーID :
+              input.col-sm-4.form-control(type="text" name="userId" id="userId" )
+            div.form-group.row
+              div.col-sm-3
+              label.col-sm-2.col-form-label(for="password" ) パスワード :
+              input.col-sm-4.form-control(type="text" name="password" id="password" )
+            input.btn.btn-success(type="submit" value="ログイン" id="loginButton" )
+      -var isErrorExist = (error && error.length !== 0)
+      if isErrorExist
+        div.alert.alert-danger 
+            #{error}
+
+    include _share/javascripts.pug

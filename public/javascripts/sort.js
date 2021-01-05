@@ -2,5 +2,5 @@
 
 const messages = document.getElementById('messages');
 new Sortable(messages, {
-  animation: 100
+  animation: 200
 });

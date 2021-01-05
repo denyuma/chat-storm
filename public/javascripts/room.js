@@ -75,27 +75,3 @@ function escape (str) {
   str = str.replace(/`/g, '&#x60;');
   return str;
 }
-
-
-// const socket = io();
-
-// document.querySelector('#messageform').addEventListener('submit', (e) => {
-//   e.preventDefault();
-
-//   const message = document.querySelector('#message');
-
-//   socket.emit('post', {text: message.value});
-
-//   message.value = '';
-// });
-
-// socket.on('post', (message) => {
-//   const messages = document.querySelector('#messages');
-//   const li = document.createElement('li');
-//   li.innerHTML = `${message.text}`;
-//   messages.insertBefore(li, messages.firstChild);
-// });
-
-// window.onload = () => {
-//   document.querySelector('#message').focus();
-// };

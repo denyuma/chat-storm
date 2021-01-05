@@ -17,19 +17,20 @@ router.post('/', (req, res) => {
     db.collection('rooms')
       .find(query)
       .toArray()
-      .then((docs) => {
-        if (docs.length > 0) {
-          const roomName = docs[0].roomName;
-          const roomId = docs[0].roomId;
-          const roomPassword = docs[0].roomPassword;
+      .then((room) => {
+        if (room.length > 0) {
+          const roomName = room[0].roomName;
+          const roomId = room[0].roomId;
+          const roomPassword = room[0].roomPassword;
 
           res.render('confirm.pug', {
             roomName: roomName,
             roomId: roomId,
-            roomPassword: roomPassword
+            roomPassword: roomPassword,
+            isAuthenticated: req.isAuthenticated()
           });
         } else {
-          const errors = validateData(req.body, docs);
+          const errors = validateData(req.body, room);
           res.render('index.pug', { errors: errors });
         }
       }).catch((error) => {
@@ -40,7 +41,7 @@ router.post('/', (req, res) => {
   });
 });
 
-function validateData(body, docs) {
+function validateData(body, room) {
   let isValidated = true;
   let errors = {};
 
@@ -54,7 +55,7 @@ function validateData(body, docs) {
     errors.roomPassword = 'パスワードを入力してください';
   }
 
-  if (body.roomId && body.roomPassword && docs.length === 0) {
+  if (body.roomId && body.roomPassword && room.length === 0) {
     isValidated = false;
     errors.mistakeIdOrPass = 'ルームIDかパスワードが間違っています';
   }
