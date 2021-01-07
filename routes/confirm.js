@@ -1,10 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const csrf = require('csrf');
+const tokens = new csrf();
 
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
 
 router.post('/', (req, res) => {
+
+  // csrf対策
+  tokens.secret((error, secret) => {
+    const token = tokens.create(secret);
+    req.session._csrf = secret;
+    res.cookie('_csrf', token);
+  });
 
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);

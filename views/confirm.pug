@@ -25,7 +25,7 @@ html(lang="ja")
         input(type="hidden" name="roomName" value=roomName )
         input(type="hidden" name="roomId" value=roomId )
         input(type="hidden" name="roomPassword" value=roomPassword )
-        input.btn.btn-danger.mr-3(type="submit" value="戻る" data-method="post" data-action="/" )
+        input.btn.btn-danger.mr-3(type="submit" value="戻る" data-method="get" data-action="/" )
         input.btn.btn-success.ml-3(type="submit" value="入室する" data-method="get" data-action="/room" )
       include _share/javascripts.pug
       script(src="/public/javascripts/confirm.js")

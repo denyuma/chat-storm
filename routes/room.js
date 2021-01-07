@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const csrf = require('csrf');
+const tokens = new csrf();
 
 const moment = require('moment-timezone');
 
@@ -7,6 +9,14 @@ const MongoClient = require('mongodb').MongoClient;
 
 
 router.get('/', (req, res) => {
+  // tokenが違うかった場合Errorを出す。
+  const secret = req.session._csrf;
+  const token = req.cookies._csrf;
+
+  if (tokens.verify(secret, token) === false) {
+    throw new Error('Invalid Token');
+  }
+
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     
     const db = client.db(DATABASE);
@@ -21,6 +31,9 @@ router.get('/', (req, res) => {
       .find(query)
       .toArray()
       .then((messages) => {
+        // tokenを削除
+        delete req.session._csrf;
+        res.clearCookie('_csrf');
         res.render('./room.pug', {
           messages: messages,
           roomName: roomName,
