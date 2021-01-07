@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
             roomName: roomName,
             roomId: roomId,
             roomPassword: roomPassword,
-            isAuthenticated: req.isAuthenticated()
+            user: req.user
           });
         } else {
           const errors = validateData(req.body, room);

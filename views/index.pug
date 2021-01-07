@@ -9,8 +9,11 @@ html(lang="ja")
     include _share/navbar.pug
 
     main(role="main" class="container")
-      div.card.my-5.bg-transparent.border-success.mb-3
-        h4.card-header.border-success ルームIDとパスワード入室する
+      div
+        p #{successMessage}
+
+      div.card.my-5.bg-transparent.border-primary.mb-3
+        h4.card-header.border-primary ルームIDとパスワード入室する
         form(action="/confirm", method="post")
           div.card-body
             div.form-group.row
@@ -21,7 +24,8 @@ html(lang="ja")
               div.col-sm-3
               label.col-sm-2.col-form-label(for="roomPassword" ) ルームパスワード :
               input.col-sm-4.form-control(type="text" name="roomPassword" id="roomPassword" )
-            input.btn.btn-success(type="submit" value="入室" )
+            button.btn.btn-outline-primary.my-2.my-sm-2(type="submit") 入室する
+
         if errors
           p #{errors.roomId}
           p #{errors.roomPassword}
@@ -36,6 +40,7 @@ html(lang="ja")
             div.col-sm-3
             label.mb-2.col-form-label(for="roomName") 部屋名を入力してください :
             input.form-control.offset-md-4.col-4(type="text" name="roomName" id="roomName" )
-          input.btn.btn-danger.mb-3(type="submit", value="新規作成")
+            button.btn.btn-outline-danger.my-2.my-sm-2(type="submit") 部屋を作成する
+
         
     include _share/javascripts.pug

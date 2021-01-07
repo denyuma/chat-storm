@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const { authenticate } = require('../lib/security/accountcontrol.js');
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
-const passport = require('passport');
 const MongoClient = require('mongodb').MongoClient;
 
 router.get('/signup', (req, res, next) => {
@@ -21,7 +20,7 @@ router.post('/signup', (req, res, next) => {
     role: role_default
   };
 
-  const errors = validateSignUpData(req.body);
+  let errors = validateSignUpData(req.body);
   if (errors) {
     res.render('./signup.pug', {
       errors: errors,
@@ -34,20 +33,36 @@ router.post('/signup', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
+
+    db.collection('users')
+      .find()
+      .toArray()
+      .then((users) => {
+        const errors = userIdExist(users, userId);
+        if (errors) {
+          res.render('./signup.pug', {
+            errors: errors,
+            username: username,
+          });
+        } 
+      }).catch((error) => {
+        throw error;
+      }).then(() => {
+        client.close();
+      });
+
     db.collection('users')
       .insertOne(user)
       .then(() => {
-        req.login(user, function(err) {
-          if (err) { return next(err); }
-          return res.redirect('/');
-        });
+        req.flash('success', '新規登録しました');
+        res.redirect('/');
       }).catch((error) => {
         throw error;
       }).then(() => {
         client.close();
       });
   });
-}).post('/login');
+});
 
 router.get('/login', (req, res, next) => {
   res.render('./login.pug', { error: req.flash('error') });
@@ -55,12 +70,42 @@ router.get('/login', (req, res, next) => {
 
 router.post('/login', authenticate());
 
+router.post('/logout', (req, res, next) => {
+  req.logout();
+  res.redirect('/');
+});
+
+/**
+ * 
+ * @param {Array} users 
+ * @param {String} userId
+ * 新規登録されたユーザーのユーザーIDが既に登録されているか判定する 
+ */
+function userIdExist(users, userId) {
+  let isUserIdExist = false;
+  let errors = {};
+
+  for (let i = 0; i < users.length; i++) {
+    console.log(users[i]);
+    isUserIdExist = (userId === users[i].userId) ? true : false;
+    if (isUserIdExist) {
+      break;
+    } else {
+      continue;
+    }
+  }
+
+  errors.userIdExist = isUserIdExist ? `${userId} は既に登録されています` : undefined;
+
+  return isUserIdExist ? errors : undefined;
+}
+
 /**
  * 
  * @param {Object} body 
  * 新規登録 で送られたデータをバリデーション
  */
-function validateSignUpData(body) {
+function validateSignUpData(body, users, userId) {
   let isValidate = true;
   let errors = {};
 
@@ -81,10 +126,8 @@ function validateSignUpData(body) {
 
   if (body.password && !(checkPassword(body.password))) {
     isValidate = false;
-    errors.notUserIdHankaku = 'パスワードがが半角英数字または6文字以上ではありません';
+    errors.notUserIdHankaku = 'パスワードが半角英数字または6文字以上ではありません';
   }
-
-  // todos ユーザーIDが被らないようにする
 
   return isValidate ? undefined : errors;
 }

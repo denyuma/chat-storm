@@ -1,16 +1,19 @@
 nav.navbar.navbar-expand-md.navbar-dark.bg-dark
   div.nav
     a(href="/").navbar-brand.ml-10 chat-storm
-    
+    ul.navbar-nav.mr-auto
+      li.nav-item
+        a(href="/search").nav-link 検索
     div(class="collapse navbar-collapse" id="navbarsExampleDefault" )
     ul.navbar-nav.mr-auto
-      if !isAuthenticated
+      if !user
         li.nav-item
           a(href="/account/signup").nav-link 新規登録
         li.nav-item
           a(href="/account/login").nav-link ログイン
-      if isAuthenticated
+      if user
         li.nav-item
           a(href=`/account/${userId}`).nav-link アカウント
-      li.nav-item
-        a(href="/search").nav-link 検索
+        form.form-inline.mt-2.mt-md-0(action="/account/logout", method="post")
+          button.btn.btn-outline-success.my-2.my-sm-2(type="submit") ログアウト
+      
