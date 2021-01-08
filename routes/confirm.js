@@ -54,19 +54,14 @@ function validateData(body, room) {
   let isValidated = true;
   let errors = {};
 
-  if (!body.roomId) {
+  if (!body.roomId || !body.roomPassword) {
     isValidated = false;
-    errors.roomId = 'ルームIDを入力してください';
-  }
-
-  if (!body.roomPassword) {
-    isValidated = false;
-    errors.roomPassword = 'パスワードを入力してください';
+    errors.roomId = 'ルームIDまたはル―ムパスワードが未入力です';
   }
 
   if (body.roomId && body.roomPassword && room.length === 0) {
     isValidated = false;
-    errors.mistakeIdOrPass = 'ルームIDかパスワードが間違っています';
+    errors.mistakeIdOrPass = 'ルームIDまたはパスワードが間違っています';
   }
 
   return isValidated ? undefined : errors;

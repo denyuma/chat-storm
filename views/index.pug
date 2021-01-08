@@ -26,10 +26,9 @@ html(lang="ja")
               input.col-sm-4.form-control(type="text" name="roomPassword" id="roomPassword" )
             button.btn.btn-outline-primary.my-2.my-sm-2(type="submit") 入室する
 
-        if errors
-          p #{errors.roomId}
-          p #{errors.roomPassword}
-          p #{errors.mistakeIdOrPass}
+        if (errors && errors.length !== 0)
+          each error in errors
+            p #{error}
 
       div.card.my-5.bg-transparent.border-danger
         div.card-header.border-danger

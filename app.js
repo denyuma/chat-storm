@@ -60,18 +60,57 @@ app.use('/account', require('./routes/account.js'));
 
 app.use(systemLogger());
 
-app.use((_req, _res, next) => {
-  next(createError(404));
+// app.use((_req, _res, next) => {
+//   next(createError(404));
+// });
+
+// app.use((err, req, res, next) => {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
+
+app.use((req, res, next) => {
+  const errorData = {
+    method: req.method,
+    protocol: req.protocol,
+    version: req.httpVersion,
+    url: req.url
+  };
+
+  res.status(404);
+  if (req.xhr) {
+    res.json(errorData);
+  } else {
+    res.render('./error/404.pug', {
+      errorData: errorData
+    });
+  }
 });
 
 app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  const errorData = {
+    method: req.method,
+    protocol: req.protocol,
+    version: req.httpVersion,
+    url: req.url,
+    name: err.name,
+    message: err.message,
+    stack: err.stack
+  };
 
-  // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  if (req.xhr) {
+    res.json(errorData);
+  } else {
+    res.render('./error/500.pug', {
+      errorData: errorData
+    });
+  }
 });
 
 module.exports = app;

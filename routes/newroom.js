@@ -25,10 +25,10 @@ router.get('/', (req, res, next) => {
 
     db.collection('rooms')
       .findOne({ roomId: roomId })
-      .then((document) => {
-        const roomName = document.roomName;
-        const roomId = document.roomId;
-        const roomPassword = document.roomPassword;
+      .then((room) => {
+        const roomName = room.roomName;
+        const roomId = room.roomId;
+        const roomPassword = room.roomPassword;
         res.render('./newroom.pug', {
           roomName: roomName,
           roomId: roomId,

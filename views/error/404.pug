@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    include ../_share/stylesheets.pug
+    title chat-storm
+  body
+    include ../_share/navbar.pug
+
+    main(role="main" class="container")
+      div.mt-5.mb-5
+        h1(style="float: left; color: black;") 404: Not Found
+        table.table.table-dark
+          tr
+            th リクエスト
+            td
+              span #{errorData.method}
+              span &nbsp;
+              span #{errorData.url}
+              span &nbsp;
+              span #{(errorData.protocol || '').toUpperCase()}/#{errorData.version}
+        a(href="/").btn.btn-secondary ホームへ戻る
+        
+    include ../_share/javascripts.pug

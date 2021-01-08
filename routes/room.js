@@ -59,8 +59,6 @@ router.post('/', (req, res) => {
     const message = req.body.message;
     const createdDate = req.body.createdDate;
 
-    // メッセージを表示してリダイレクトをする
-
     Promise.all([
       db.collection('messages').insertOne({
         roomId: roomId,

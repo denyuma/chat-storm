@@ -8,6 +8,4 @@ router.get('/', (req, res, next) => {
   });
 });
 
-router
-
 module.exports = router;
