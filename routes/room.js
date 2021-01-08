@@ -10,11 +10,13 @@ const MongoClient = require('mongodb').MongoClient;
 
 router.get('/', (req, res) => {
   // tokenが違うかった場合Errorを出す。
-  const secret = req.session._csrf;
-  const token = req.cookies._csrf;
-
-  if (tokens.verify(secret, token) === false) {
-    throw new Error('Invalid Token');
+  if (req.query.new === 1){
+    const secret = req.session._csrf;
+    const token = req.cookies._csrf;
+  
+    if (tokens.verify(secret, token) === false) {
+      throw new Error('Invalid Token');
+    }
   }
 
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {

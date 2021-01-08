@@ -24,6 +24,7 @@
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.3",
     "csrf": "^3.1.0",
+    "csurf": "1.8.3",
     "debug": "~2.6.9",
     "express": "^4.16",
     "express-session": "^1.17.1",

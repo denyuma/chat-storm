@@ -20,7 +20,7 @@ html(lang="ja")
         tr
           td ルームパスワード
           td #{roomPassword}
-      form(action=`/room`, method="get")
+      form(action=`/room?new=1`, method="get")
         input(type="hidden" name="roomName" value=roomName )
         input(type="hidden" name="roomId" value=roomId )
         input(type="hidden" name="roomPassword" value=roomPassword )
