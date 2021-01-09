@@ -25,6 +25,6 @@ html(lang="ja")
         input(type="hidden" name="roomName" value=roomName )
         input(type="hidden" name="roomId" value=roomId )
         input(type="hidden" name="roomPassword" value=roomPassword )
-        input.btn.btn-primary(type="submit" value="入室する" )
+        input.btn.btn-primary(type="submit" value="入室する" onclick="disableButton(this);" )
     include _share/javascripts.pug
       

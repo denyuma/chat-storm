@@ -41,7 +41,8 @@ router.post('/', (req, res) => {
           });
         } else {
           const errors = validateData(req.body, room);
-          res.render('index.pug', { errors: errors });
+          req.flash('errors', errors);
+          res.redirect('/');
         }
       }).catch((error) => {
         throw error;
@@ -57,7 +58,7 @@ function validateData(body, room) {
 
   if (!body.roomId || !body.roomPassword) {
     isValidated = false;
-    errors.roomId = 'ルームIDまたはル―ムパスワードが未入力です';
+    errors.notEntered = 'ルームIDまたはル―ムパスワードが未入力です';
   }
 
   if (body.roomId && body.roomPassword && room.length === 0) {

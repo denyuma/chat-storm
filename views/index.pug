@@ -24,11 +24,11 @@ html(lang="ja")
               div.col-sm-3
               label.col-sm-2.col-form-label(for="roomPassword" ) ルームパスワード :
               input.col-sm-4.form-control(type="text" name="roomPassword" id="roomPassword" )
-            button.btn.btn-outline-primary.my-2.my-sm-2(type="submit") 入室する
+            button.btn.btn-outline-primary.my-2.my-sm-2(type="submit" onclick="disableButton(this);") 入室する
 
-        if (errors && errors.length !== 0)
-          each error in errors
-            p #{error}
+        if (errorMessage && errorMessage.length !== 0)
+          each error in errorMessage
+            p #{(JSON.stringify(error)).replace(/"/g, '')}
 
       div.card.my-5.bg-transparent.border-danger
         div.card-header.border-danger
@@ -39,7 +39,7 @@ html(lang="ja")
             div.col-sm-3
             label.mb-2.col-form-label(for="roomName") 部屋名を入力してください :
             input.form-control.offset-md-4.col-4(type="text" name="roomName" id="roomName" )
-            button.btn.btn-outline-danger.my-2.my-sm-2(type="submit") 部屋を作成する
+            button.btn.btn-outline-danger.my-2.my-sm-2(type="submit" onclick="disableButton(this);" ) 部屋を作成する
 
         
     include _share/javascripts.pug
