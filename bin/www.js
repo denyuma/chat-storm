@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '8000');
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -43,7 +43,7 @@ app.set('port', port);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-console.log('listening Port in 8000');
+console.log('listening Port in 3000');
 
 /**
  * Normalize a port into a number, string, or false.

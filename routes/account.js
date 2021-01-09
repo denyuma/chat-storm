@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const { authenticate } = require('../lib/security/accountcontrol.js');
+const hash = require('../lib/security/hash.js');
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
 
 router.get('/signup', (req, res, next) => {
-  res.render('./signup.pug');
+  res.render('./account/signup.pug');
 });
 
 router.post('/signup', (req, res, next) => {
@@ -16,13 +17,13 @@ router.post('/signup', (req, res, next) => {
   const user = {
     username: username,
     userId: userId,
-    password: password,
+    password: hash.digest(password),
     role: role_default
   };
 
   let errors = validateSignUpData(req.body);
   if (errors) {
-    res.render('./signup.pug', {
+    res.render('./account/signup.pug', {
       errors: errors,
       username: username,
       userId: userId
@@ -40,32 +41,28 @@ router.post('/signup', (req, res, next) => {
       .then((users) => {
         const errors = userIdExist(users, userId);
         if (errors) {
-          res.render('./signup.pug', {
+          res.render('./account/signup.pug', {
             errors: errors,
             username: username,
           });
-        } 
-      }).catch((error) => {
-        throw error;
-      }).then(() => {
-        client.close();
-      });
-
-    db.collection('users')
-      .insertOne(user)
-      .then(() => {
-        req.flash('success', '新規登録しました');
-        res.redirect('/');
-      }).catch((error) => {
-        throw error;
-      }).then(() => {
-        client.close();
+        } else {
+          db.collection('users')
+            .insertOne(user)
+            .then(() => {
+              req.flash('success', '新規登録しました');
+              res.redirect('/');
+            }).catch((error) => {
+              throw error;
+            }).then(() => {
+              client.close();
+            });
+        }
       });
   });
 });
 
 router.get('/login', (req, res, next) => {
-  res.render('./login.pug', { error: req.flash('error') });
+  res.render('./account/login.pug', { error: req.flash('error') });
 });
 
 router.post('/login', authenticate());

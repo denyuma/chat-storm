@@ -3,10 +3,10 @@ html(lang="ja")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    include _share/stylesheets.pug
+    include ../_share/stylesheets.pug
     title chat-storm
   body
-    include _share/navbar.pug
+    include ../_share/navbar.pug
 
     main(role="main" class="container")
       div.card.my-5.bg-transparent.border-success.mb-3
@@ -36,4 +36,4 @@ html(lang="ja")
             input.btn.btn-success(type="submit" value="登録" )
         
 
-    include _share/javascripts.pug
+    include ../_share/javascripts.pug

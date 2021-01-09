@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const csrf = require('csrf');
 const tokens = new csrf();
+const {encryptString, decryptString} = require('../lib/security/encrypt.js');
 
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
@@ -19,7 +20,7 @@ router.post('/', (req, res) => {
     const db = client.db(DATABASE);
 
     const roomId = req.body.roomId;
-    const roomPassword = req.body.roomPassword;
+    const roomPassword = encryptString(req.body.roomPassword);
 
     const query = { $and: [{ roomId: roomId, roomPassword: roomPassword }] };
 
@@ -30,7 +31,7 @@ router.post('/', (req, res) => {
         if (room.length > 0) {
           const roomName = room[0].roomName;
           const roomId = room[0].roomId;
-          const roomPassword = room[0].roomPassword;
+          const roomPassword = decryptString(room[0].roomPassword);
 
           res.render('confirm.pug', {
             roomName: roomName,
