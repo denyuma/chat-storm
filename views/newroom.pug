@@ -22,9 +22,7 @@ html(lang="ja")
           td ルームパスワード
           td #{roomPassword}
       form(action=`/room?new=1`, method="get")
-        input(type="hidden" name="roomName" value=roomName )
         input(type="hidden" name="roomId" value=roomId )
-        input(type="hidden" name="roomPassword" value=roomPassword )
         input.btn.btn-primary(type="submit" value="入室する" onclick="disableButton(this);" )
     include _share/javascripts.pug
       

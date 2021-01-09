@@ -8,19 +8,19 @@ module.exports = {
     },
     FileLogAppender: {
       type: 'file',
-      filename: path.join(ROOT, './log/system/system.log'),
+      filename: path.join(ROOT, './logs/system/system.log'),
       maxLogSize: 5000000,
       backups: 10
     },
     MultiFileLogAppender: {
       type: 'multiFile',
-      base: path.join(ROOT, './log/application'),
+      base: path.join(ROOT, './logs/application'),
       property: 'key',
       extension: '.log'
     },
     DateRollingFileAppender: {
       type: 'dateFile',
-      filename: path.join(ROOT, './log/access/access.log'),
+      filename: path.join(ROOT, './logs/access/access.log'),
       pattern: '-yyyyMMdd',
       daysToKeep: 30
     }

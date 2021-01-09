@@ -82,7 +82,9 @@ router.post('/', (req, res, next) => {
         db.collection('rooms').insertOne({
           roomName: roomName,
           roomId: roomId,
-          roomPassword: roomPassword
+          roomPassword: roomPassword,
+          createdBy: 'test user', //todos 
+          createdDate: new Date().toISOString()
         }).then(() => {
           res.redirect(`/newroom?roomId=${roomId}`);
         }).catch((error) => {

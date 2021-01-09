@@ -5,7 +5,7 @@
 const express = require('express');
 const app = express();
 
-const createError = require('http-errors');
+// const createError = require('http-errors');
 const logger = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -36,6 +36,11 @@ app.use(session({
   saveUninitialized: true,
   name: 'sid'
 }));
+
+app.use((req, res, next) => {
+  res.cookie('tracking_key', require('crypto').randomBytes(4).toString('hex'), { expires: new Date(Date.now() + (1000 * 60 * 60 * 24))});
+  next();
+});
 
 app.use(flash());
 app.use(...accountcontrol.initialize());

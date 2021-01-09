@@ -15,9 +15,8 @@ $(() => {
     const button = $(e);
 
     button.click(() => {
-      const roomName = button.data('room-name');
       const roomId = button.data('room-id');
-      const roomPassword = button.data('room-password');
+      
       const message = $message.val();
       
       const date = new Date();
@@ -31,7 +30,7 @@ $(() => {
       const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 
       $.post(
-        `/room?roomName=${roomName}&roomId=${roomId}&roomPassword=${roomPassword}`, //todos
+        `/room?roomId=${roomId}`,
         {
           message: message,
           createdDate: createdDate
