@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const csrf = require('csrf');
 const tokens = new csrf();
-const {encryptString, decryptString} = require('../lib/security/encrypt');
+const { encryptString, decryptString } = require('../lib/security/encrypt');
 
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
@@ -40,12 +40,12 @@ router.get('/', (req, res, next) => {
     req.session._csrf = secret;
     res.cookie('_csrf', token);
   });
-  
+
   const roomId = req.query.roomId;
 
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
-    
+
     db.collection('rooms')
       .findOne({ roomId: roomId })
       .then((room) => {
@@ -67,16 +67,22 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
+    const errors = validateData(req.body);
+    if (errors) {
+      req.flash('errors', errors);
+      res.redirect('/');
+      return;
+    }
 
     db.collection('rooms')
       .find()
       .toArray()
       .then((rooms) => {
-        const roomName = req.body.roomName || '(部屋名未設定)';
+        const roomName = req.body.roomName;
+        const isPublic = (req.body.isPublic === 'on') ? true : false;
         const roomId = createRoomIdGenerator(rooms);
         const roomPassword = createPasswordGenerator();
         const createdBy = req.user ? req.user.username : req.cookies.tracking_key;
@@ -84,8 +90,9 @@ router.post('/', (req, res, next) => {
           roomName: roomName,
           roomId: roomId,
           roomPassword: roomPassword,
-          createdBy: createdBy, 
-          createdDate: new Date().toISOString()
+          createdBy: createdBy,
+          createdDate: new Date().toISOString(),
+          isPublic: isPublic
         }).then(() => {
           res.redirect(`/newroom?roomId=${roomId}`);
         }).catch((error) => {
@@ -96,5 +103,18 @@ router.post('/', (req, res, next) => {
       });
   });
 });
+
+// 部屋名が入力されているかの確認
+function validateData(body) {
+  let isValidated = true;
+  let errors = {};
+
+  if (!body.roomName) {
+    isValidated = false;
+    errors.roomNameEmpty = '部屋名を入力してください';
+  }
+
+  return isValidated ? undefined : errors;
+}
 
 module.exports = router;

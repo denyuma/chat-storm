@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    include ../_share/stylesheets.pug
+    title chat-storm
+  body
+    include ../_share/navbar.pug
+
+    main(role="main" class="container")
+      div.float-right
+        span.badge.badge-secondary #{count}件
+      
+      form.form-inline.mt-5.mb-5(method="get" action="/rooms")
+        input.form-control(type="text" id="keyword" name="keyword" value=keyword)
+        input.btn.btn-success.ml-2(type="submit" value="検索")
+      
+      div.mt-5.mb-5
+        each room of rooms
+          div.card.mt-3.mt-3
+            a(href=`/rooms/room?roomId=${room.roomId}`)
+              div.card-body
+                h5.card-title 部屋名:#{room.roomName}
+                  p.card-text 作成者:#{room.createdBy}
+
+      
+      nav
+        ul.pagination
+          - for (let i = 1; i <= pagination.max; i++)
+            - if (pagination.current !== i)
+              li.page-item
+                a(href=`/rooms?keyword=${keyword}&page=${i}`)
+            - else
+              li.page-item.active
+                span.page-link.disabled #{i}
+    include ../_share/javascripts.pug

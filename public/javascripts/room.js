@@ -30,7 +30,7 @@ $(() => {
       const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 
       $.post(
-        `/room?roomId=${roomId}`,
+        `/rooms/room?roomId=${roomId}`,
         {
           message: message,
           createdDate: createdDate

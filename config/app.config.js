@@ -5,5 +5,8 @@ module.exports = {
     HASH_STRETCH: 3,
     ENCRYPTION_KEY: '9FzB9U7HDFbcxm+G20NtA3XSzh0SoG8f',
     BUFFER_KEY: 'KBoSm6Wwt+4tVFXj'
+  },
+  search: {
+    MAX_ITEM_PER_PAGE: 10
   }
 };

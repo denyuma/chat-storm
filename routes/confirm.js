@@ -9,7 +9,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 router.post('/', (req, res) => {
 
-  // csrf対策
+  // csrf対策 tokenを作成
   tokens.secret((error, secret) => {
     const token = tokens.create(secret);
     req.session._csrf = secret;

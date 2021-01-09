@@ -64,7 +64,7 @@ app.use(accessLogger());
 
 app.use('/', require('./routes/index.js'));
 app.use('/newroom', require('./routes/newroom.js'));
-app.use('/room', require('./routes/room.js'));
+app.use('/rooms', require('./routes/rooms.js'));
 app.use('/confirm', require('./routes/confirm.js'));
 app.use('/account', require('./routes/account.js'));
 
