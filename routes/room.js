@@ -62,6 +62,7 @@ router.post('/', (req, res) => {
 
     const roomId = req.query.roomId;
     const message = req.body.message;
+    const username = req.user ? req.user.username : req.cookies.tracking_key;
     const createdDate = req.body.createdDate;
 
     Promise.all([
@@ -70,7 +71,7 @@ router.post('/', (req, res) => {
       db.collection('messages').insertOne({
         roomId: roomId,
         message: message,
-        username: 'test-user', //todos
+        username: username, 
         createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
       })
     ]).then((results) => {

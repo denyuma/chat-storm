@@ -38,7 +38,12 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  res.cookie('tracking_key', require('crypto').randomBytes(4).toString('hex'), { expires: new Date(Date.now() + (1000 * 60 * 60 * 24))});
+  if (!req.cookies.tracking_key){
+    const trackingIdKey = 'tracking_key';
+    const trackingId = require('crypto').randomBytes(6).toString('base64');
+    const tomorrow = new Date(Date.now() + (1000 * 60 * 60 * 24));
+    res.cookie(trackingIdKey, trackingId, { expires: tomorrow });
+  }
   next();
 });
 

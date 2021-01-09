@@ -79,11 +79,12 @@ router.post('/', (req, res, next) => {
         const roomName = req.body.roomName || '(部屋名未設定)';
         const roomId = createRoomIdGenerator(rooms);
         const roomPassword = createPasswordGenerator();
+        const createdBy = req.user ? req.user.username : req.cookies.tracking_key;
         db.collection('rooms').insertOne({
           roomName: roomName,
           roomId: roomId,
           roomPassword: roomPassword,
-          createdBy: 'test user', //todos 
+          createdBy: createdBy, 
           createdDate: new Date().toISOString()
         }).then(() => {
           res.redirect(`/newroom?roomId=${roomId}`);
