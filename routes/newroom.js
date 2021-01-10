@@ -85,7 +85,7 @@ router.post('/', (req, res, next) => {
         const isPublic = (req.body.isPublic === 'on') ? true : false;
         const roomId = createRoomIdGenerator(rooms);
         const roomPassword = createPasswordGenerator();
-        const createdBy = req.user ? req.user.username : req.cookies.tracking_key;
+        const createdBy = req.user ? req.user.userId : req.cookies.tracking_key;
         db.collection('rooms').insertOne({
           roomName: roomName,
           roomId: roomId,

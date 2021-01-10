@@ -9,18 +9,18 @@ html(lang="ja")
     include ../_share/navbar.pug
 
     main(role="main" class="container")
-      h2.mt-5 公開された部屋一覧を検索する
+      h2.mt-5 作成した部屋の一覧
 
       div.float-right
         span.badge.badge-secondary #{data.count}件
       
-      form.form-inline.mt-5.mb-5(method="get" action="/rooms")
+      form.form-inline.mt-5.mb-5(method="get" action=`/account/${user.userId}`)
         input.form-control(type="text" id="keyword" name="keyword" value=data.keyword)
         input.btn.btn-success.ml-2(type="submit" value="検索")
       
       div.mt-5.mb-5
         each room of data.rooms
-          include ./_item.pug
+          include ../rooms/_item.pug
 
       
       nav
@@ -28,7 +28,7 @@ html(lang="ja")
           - for (let i = 1; i <= data.pagination.max; i++)
             - if (data.pagination.current !== i)
               li.page-item
-                a.page-link(href=`/rooms?keyword=${data.keyword}&page=${i}`) #{i}
+                a.page-link(href=`/account/${user.userId}?keyword=${data.keyword}&page=${i}`) #{i}
             - else
               li.page-item.active
                 span.page-link.disabled #{i}

@@ -54,8 +54,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// app.use('/public', express.static(__dirname + '/public/' + (process.env.NODE_ENV === 'development' ? 'development' : 'production')));
-
 app.use(accessLogger());
 
 /**
@@ -84,6 +82,10 @@ app.use(systemLogger());
 //   res.render('error');
 // });
 
+/**
+ * res.statusが404と500の時のエラーページの表示
+ */
+
 app.use((req, res, next) => {
   const errorData = {
     method: req.method,
@@ -97,7 +99,8 @@ app.use((req, res, next) => {
     res.json(errorData);
   } else {
     res.render('./error/404.pug', {
-      errorData: errorData
+      errorData: errorData,
+      user: req.user
     });
   }
 });
@@ -118,7 +121,8 @@ app.use((err, req, res, next) => {
     res.json(errorData);
   } else {
     res.render('./error/500.pug', {
-      errorData: errorData
+      errorData: errorData,
+      user: req.user
     });
   }
 });

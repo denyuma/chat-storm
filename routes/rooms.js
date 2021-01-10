@@ -18,7 +18,9 @@ router.get('/', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    const query = { $and: [{ roomName: regexp }, { isPublic: true }] };
+    const query = {
+      $and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { isPublic: true }]
+    };
 
     Promise.all([
       db.collection('rooms')
@@ -40,7 +42,10 @@ router.get('/', (req, res, next) => {
           current: page
         }
       };
-      res.render('./rooms/list.pug', data);
+      res.render('./rooms/list.pug', {
+        data: data,
+        user: req.user
+      });
     }).catch((error) => {
       throw error;
     }).then(() => {

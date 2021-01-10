@@ -1,7 +1,8 @@
 const router = require('express').Router();
-const { authenticate } = require('../lib/security/accountcontrol.js');
 const hash = require('../lib/security/hash.js');
+const { authenticate } = require('../lib/security/accountcontrol.js');
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
+const { MAX_ITEM_PER_PAGE } = require('../config/app.config.js').search;
 const MongoClient = require('mongodb').MongoClient;
 
 router.get('/signup', (req, res, next) => {
@@ -69,7 +70,56 @@ router.post('/login', authenticate());
 
 router.post('/logout', (req, res, next) => {
   req.logout();
+  req.flash('success', 'ログアウトしました');
   res.redirect('/');
+});
+
+router.get('/:userId', (req, res, next) => {
+  const userId = req.params.userId;
+
+  const page = req.query.page ? parseInt(req.query.page) : 1;
+  const keyword = req.query.keyword || '';
+
+  const regexp = new RegExp(`.*${keyword}.*`);
+
+  MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+    const db = client.db(DATABASE);
+
+    const query = {
+      $and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { createdBy: userId }]
+    };
+
+    Promise.all([
+      db.collection('rooms')
+        .find(query)
+        .count(),
+      db.collection('rooms')
+        .find(query)
+        .sort({ createdDate: -1 })
+        .skip((page - 1) * MAX_ITEM_PER_PAGE)
+        .limit(MAX_ITEM_PER_PAGE)
+        .toArray()
+    ]).then((results) => {
+      const data = {
+        keyword: keyword,
+        count: results[0],
+        rooms: results[1],
+        pagination: {
+          max: Math.ceil(results[0] / MAX_ITEM_PER_PAGE),
+          current: page
+        }
+      };
+      res.render('./account/mypage.pug', {
+        data: data,
+        user: req.user
+      });
+    }).catch((error) => {
+      throw error;
+    }).then(() => {
+      client.close();
+    });
+
+  });
 });
 
 /**
