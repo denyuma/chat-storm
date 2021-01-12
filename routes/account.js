@@ -13,13 +13,11 @@ router.post('/signup', (req, res, next) => {
   const username = req.body.username || '';
   const userId = req.body.userId || '';
   const password = req.body.password;
-  const role_default = 'default';
 
   const user = {
     username: username,
     userId: userId,
-    password: hash.digest(password),
-    role: role_default
+    password: hash.digest(password)
   };
 
   let errors = validateSignUpData(req.body);
@@ -199,7 +197,9 @@ router.get('/:userId/rooms', (req, res, next) => {
       };
       res.render('./account/createdRoom.pug', {
         data: data,
-        user: req.user
+        user: req.user,
+        successMessage: req.flash('success'),
+        errorMessage: req.flash('error')
       });
     }).catch((error) => {
       throw error;
@@ -207,6 +207,64 @@ router.get('/:userId/rooms', (req, res, next) => {
       client.close();
     });
 
+  });
+});
+
+router.get('/:userId/rooms/:roomId', (req, res, next) => {
+  const roomId = req.params.roomId;
+  const userId = req.params.userId;
+  MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+    const db = client.db(DATABASE);
+
+    Promise.all([
+      db.collection('rooms')
+        .findOne({roomId: roomId}),
+      db.collection('users')
+        .findOne({userId: userId})
+    ]).then(results => {
+      const room = results[0];
+      const user = results[1];
+
+      res.render('./account/roomedit.pug', {
+        room: room,
+        user: user
+      }).catch((error) => {
+        throw error;
+      }).then(() => {
+        client.close();
+      });
+    });
+  });
+});
+
+router.post('/:userId/rooms/:roomId', (req, res, next) => {
+  const userId = req.params.userId;
+  const roomId = req.params.roomId;
+  const roomName = req.body.roomName;
+  const isPublic = req.body.isPublic ? true : false;
+
+  if (!roomName) {
+    req.flash('error', '部屋名が未入力です');
+    return res.redirect(`/account/${userId}/rooms/${roomId}`);
+  }
+
+  MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+    const db = client.db(DATABASE);
+
+    const query = {roomId: roomId};
+
+    const set = {'$set': {roomName: roomName, isPublic: isPublic}};
+
+    db.collection('rooms')
+      .findOneAndUpdate(query, set)
+      .then(() => {
+        req.flash('success', '部屋を編集しました');
+        res.redirect(`/account/${userId}/rooms`);
+      }).catch((error) => {
+        throw error;
+      }).then(() => {
+        client.close();
+      });
   });
 });
 

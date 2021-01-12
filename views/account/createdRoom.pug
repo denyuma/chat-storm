@@ -9,6 +9,12 @@ html(lang="ja")
     include ../_share/navbar.pug
 
     main(role="main" class="container")
+      if errorMessage
+        p #{errorMessage}
+      
+      if successMessage
+        p #{successMessage}
+
       h2.mt-5 作成した部屋の一覧
 
       div.float-right
@@ -20,7 +26,13 @@ html(lang="ja")
       
       div.mt-5.mb-5
         each room of data.rooms
-          include ../rooms/_item.pug
+          div.card.mt-3.mt-3
+            a(href=`/rooms/room?roomId=${room.roomId}`)
+              div.card-body
+                h5.card-title 部屋名:#{room.roomName}
+                p.card-text 作成者:#{room.createdBy}
+                a.btn.btn-success(type="button", href=`/account/${user.userId}/rooms/${room.roomId}`) この部屋情報を編集する
+
 
       
       nav

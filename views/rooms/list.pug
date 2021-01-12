@@ -20,7 +20,11 @@ html(lang="ja")
       
       div.mt-5.mb-5
         each room of data.rooms
-          include ./_item.pug
+          div.card.mt-3.mt-3
+            a(href=`/rooms/room?roomId=${room.roomId}`)
+              div.card-body
+                h5.card-title 部屋名:#{room.roomName}
+                p.card-text 作成者:#{room.createdBy}
 
       
       nav
