@@ -10,6 +10,8 @@ html(lang="ja")
 
     main(role="main" class="container")
       div
+        p #{info}
+      div
         p #{successMessage}
       if (errorMessage && errorMessage.length !== 0)
         each error in errorMessage

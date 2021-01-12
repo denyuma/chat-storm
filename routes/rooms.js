@@ -56,20 +56,11 @@ router.get('/', (req, res, next) => {
 
 
 router.get('/room', (req, res, next) => {
-  // tokenが違うかった場合Errorを出す。
-  if (req.query.new === 1) {
-    const secret = req.session._csrf;
-    const token = req.cookies._csrf;
-
-    if (tokens.verify(secret, token) === false) {
-      throw new Error('Invalid Token');
-    }
-  }
 
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    const roomId = req.query.roomId;
+    const roomId = req.query.roomId || req.body.roomId;
     const query = { roomId: { $eq: roomId } };
 
     Promise.all([
@@ -103,12 +94,25 @@ router.get('/room', (req, res, next) => {
 });
 
 router.post('/room', (req, res, next) => {
+  // 部屋作成時と入室時tokenが違うかった場合Errorを出す。
+  const secret = req.session._csrf;
+  const token = req.cookies._csrf;
+
+  if (tokens.verify(secret, token) === false) {
+    throw new Error('Invalid Token');
+  }
+
+  const roomId = req.query.roomId || req.body.roomId;
+  res.redirect(`/rooms/room?roomId=${roomId}`);
+});
+
+router.post('/room/:roomId/post', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    const roomId = req.query.roomId;
+    const roomId = req.params.roomId;
     const message = req.body.message;
-    const username = req.user ? req.user.username : req.cookies.tracking_key;
+    const userId = req.user ? req.user.userId : req.cookies.tracking_key;
     const createdDate = req.body.createdDate;
 
     Promise.all([
@@ -117,7 +121,7 @@ router.post('/room', (req, res, next) => {
       db.collection('messages').insertOne({
         roomId: roomId,
         message: message,
-        username: username,
+        createdBy: userId,
         createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
       })
     ]).then((results) => {

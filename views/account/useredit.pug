@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    include ../_share/stylesheets.pug
+    title chat-storm
+  body
+    include ../_share/navbar.pug
+
+    p #{error}
+
+    h3.my-3 アカウントの編集
+    form(method="post" action=`/account/${user.userId}?edit=1`)
+      div.form-group.raw
+        label(for="username").col-3 ユーザー名
+        input(type="text" name="username" value=user.username)#username.form-control.col-4
+      div.form-group.raw
+        label(for="userId").col-3 ユーザーID
+        input(type="text" name="userId" value=user.userId)#userId.form-control.col-4
+      div.form-group.raw
+        label(for="userId").col-3 パスワード
+        input(type="text" name="password" value=user.password)#password.form-control.col-4
+      div
+        button(type="submit").btn.btn-info 以上の内容で編集する
+
+    form(method="post" action=`/account/${user.userId}?delete=1`)
+      button(type="submit" onClick="confirm('本当に削除しますか?')").btn.btn-danger アカウントを消去する
+
+    main(role="main" class="container")
+
+    include ../_share/javascripts.pug

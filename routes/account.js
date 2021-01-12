@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const hash = require('../lib/security/hash.js');
-const { authenticate } = require('../lib/security/accountcontrol.js');
+const { authenticate, authenticateLocal , authorize } = require('../lib/security/accountcontrol.js');
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const { MAX_ITEM_PER_PAGE } = require('../config/app.config.js').search;
 const MongoClient = require('mongodb').MongoClient;
@@ -50,8 +50,7 @@ router.post('/signup', (req, res, next) => {
           db.collection('users')
             .insertOne(user)
             .then(() => {
-              req.flash('success', '新規登録しました');
-              res.redirect('/');
+              authenticateLocal(req, res, next);
             }).catch((error) => {
               throw error;
             }).then(() => {
@@ -70,11 +69,100 @@ router.post('/login', authenticate());
 
 router.post('/logout', (req, res, next) => {
   req.logout();
-  req.flash('success', 'ログアウトしました');
+  req.flash('info', 'ログアウトしました');
   res.redirect('/');
 });
 
-router.get('/:userId', (req, res, next) => {
+router.get('/:userId', authorize(), (req, res, next) => {
+  const userId = req.params.userId;
+
+  MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+    const db = client.db(DATABASE);
+
+    db.collection('users')
+      .findOne({ userId: userId })
+      .then((user) => {
+        res.render('./account/useredit.pug', {
+          user: user,
+          error: req.flash('error')
+        });
+      }).catch((error) => {
+        throw error;
+      }).then(() => {
+        client.close();
+      });
+  });
+});
+
+router.post('/:userId', authorize(), (req, res, next) => {
+  if (parseInt(req.query.edit) === 1) {
+    const username = req.body.username;
+    const oldUserId = req.params.userId;
+    const newUserId = req.body.userId;
+
+    if (username === '' || newUserId === '') {
+      req.flash('error', 'ユーザー名またはユーザーIDは未入力です');
+      res.redirect(`/account/${oldUserId}`);
+      return;
+    }
+
+    MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+      const db = client.db(DATABASE);
+
+      db.collection('users')
+        .find()
+        .toArray()
+        .then((users) => {
+          const errors = userIdExist(users, newUserId);
+          if (errors) {
+            req.flash('error', newUserId + 'は既に登録されています');
+            res.redirect(`/account/${oldUserId}`);
+          } else {
+            Promise.all([
+              db.collection('users')
+                .findOneAndUpdate({ userId: oldUserId }, { '$set': { userId: newUserId, username: username } }),
+              db.collection('rooms')
+                .updateMany({ createdBy: oldUserId }, { '$set': { createdBy: newUserId } }),
+              db.collection('messages')
+                .updateMany({ createdBy: oldUserId }, { '$set': { createdBy: newUserId } })
+            ]).then(() => {
+              db.collection('users')
+                .find()
+                .toArray()
+                .then((users) => {
+                  console.log(users);
+                });
+              req.flash('success', 'ユーザー情報を変更しました');
+              res.redirect('/');
+            }).catch((error) => {
+              throw error;
+            }).then(() => {
+              client.close();
+            });
+          }
+        });
+    });
+  } else if (parseInt(req.query.delete) === 1) {
+    req.logout();
+
+    const userId = req.params.userId;
+
+    MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
+      const db = client.db(DATABASE);
+
+      const query = { userId: userId };
+
+      db.collection('users')
+        .deleteOne(query)
+        .then(() => {
+          req.flash('success', 'アカウントを消去しました');
+          res.redirect('/');
+        });
+    });
+  }
+});
+
+router.get('/:userId/rooms', (req, res, next) => {
   const userId = req.params.userId;
 
   const page = req.query.page ? parseInt(req.query.page) : 1;
@@ -109,7 +197,7 @@ router.get('/:userId', (req, res, next) => {
           current: page
         }
       };
-      res.render('./account/mypage.pug', {
+      res.render('./account/createdRoom.pug', {
         data: data,
         user: req.user
       });

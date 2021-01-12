@@ -14,7 +14,7 @@ html(lang="ja")
       div.float-right
         span.badge.badge-secondary #{data.count}件
       
-      form.form-inline.mt-5.mb-5(method="get" action=`/account/${user.userId}`)
+      form.form-inline.mt-5.mb-5(method="get" action=`/account/${user.userId}/rooms`)
         input.form-control(type="text" id="keyword" name="keyword" value=data.keyword)
         input.btn.btn-success.ml-2(type="submit" value="検索")
       
@@ -28,7 +28,7 @@ html(lang="ja")
           - for (let i = 1; i <= data.pagination.max; i++)
             - if (data.pagination.current !== i)
               li.page-item
-                a.page-link(href=`/account/${user.userId}?keyword=${data.keyword}&page=${i}`) #{i}
+                a.page-link(href=`/account/${user.userId}/rooms?keyword=${data.keyword}&page=${i}`) #{i}
             - else
               li.page-item.active
                 span.page-link.disabled #{i}

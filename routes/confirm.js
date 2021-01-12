@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const csrf = require('csrf');
 const tokens = new csrf();
-const {encryptString, decryptString} = require('../lib/security/encrypt.js');
+const { encryptString, decryptString } = require('../lib/security/encrypt.js');
 
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
 
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
 
   // csrf対策 tokenを作成
   tokens.secret((error, secret) => {

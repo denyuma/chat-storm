@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
 
 const systemLogger = require('./lib/log/systemLogger.js');
 const accessLogger = require('./lib/log/accessLogger.js');
@@ -36,6 +37,9 @@ app.use(session({
   saveUninitialized: true,
   name: 'sid'
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
   if (!req.cookies.tracking_key){

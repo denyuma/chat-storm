@@ -15,8 +15,8 @@ nav.navbar.navbar-expand-md.navbar-dark.bg-dark
         div.dropdown.mt-2.mr-3
           a.btn.btn-info.dropdown-toggle(href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") アカウント
           div.dropdown-menu(aria-labelledby="dropdownMenuLink")
-            a.dropdown-item(href=`/account/${user.userId}`) 作成した部屋一覧
-            a.dropdown-item(href="#") アカウント設定
+            a.dropdown-item(href=`/account/${user.userId}/rooms`) 作成した部屋一覧
+            a.dropdown-item(href=`/account/${user.userId}`) アカウント設定
         form.form-inline.mt-2.mt-md-0(action="/account/logout", method="post")
           button.btn.btn-outline-success.my-2.my-sm-2(type="submit") ログアウト
       
