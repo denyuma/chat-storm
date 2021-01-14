@@ -15,13 +15,13 @@ html(lang="en")
         table.my-3.table.table-bordered(class="confirm-table")
           tr
             td 部屋名
-            td #{roomName}
+            td #{room.roomName}
           tr
             td ルームID
-            td #{roomId}
+            td #{room.roomId}
           tr
             td ルームパスワード
-            td #{roomPassword}
+            td #{room.roomPassword}
 
     
     div(id="messages" data-js-selector="messages" class="items" )
@@ -36,9 +36,9 @@ html(lang="en")
       button(
         type="submit"
         class="message-send-button"
-        data-room-name=roomName
-        data-room-id=roomId
-        data-room-password=roomPassword
+        data-room-name=room.roomName
+        data-room-id=room.roomId
+        data-room-password=room.roomPassword
       ).btn.btn-primary 送信
       
     include _share/javascripts.pug

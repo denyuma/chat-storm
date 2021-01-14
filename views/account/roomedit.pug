@@ -14,21 +14,23 @@ html(lang="ja")
     form(method="post" action=`/account/${user.userId}/rooms/${room.roomId}?edit=1`)
       div.form-group.raw
         label(for="roomName").col-3 部屋名
-        input(type="text" name="roomName" value=room.roomName)#roomName.form-control.col-4
+        input(type="text" name="roomName" value=room.roomName).form-control.col-4
       div.form-group.raw
         label(for="roomId").col-3 ルームID
-        input(type="text" name="roomId" value=room.roomId readonly)#roomId.form-control.col-4
+        p.form-control.col-4(name="roomId") #{room.roomId}
       div.form-group.raw
         label(for="roomPassword").col-3 ルームパスワード
-        input(type="text" name="roomPassword" value=room.roomPassword readonly)#roomPassword.form-control.col-4
+        p.form-control.col-4(name="roomPassword") #{room.roomPassword}
       div.form-group.raw
         label(for="isPublic").col-3 部屋を公開する
-        input(type="checkbox" name="isPublic" checked=room.isPublic ? true : false)#isPublic.form-control.col-4
+        input(type="checkbox" name="isPublic" checked=room.isPublic ? true : false).form-control.col-4
       div
         button(type="submit").btn.btn-info 以上の内容で編集する
 
     form(method="post" action=`/account/${user.userId}/rooms/${room.roomId}?delete=1`)
-      button(type="submit" onClick="confirm('本当に削除しますか?')").btn.btn-danger この部屋を削除する
+      input(type="hidden" name="roomId" value=room.roomId)
+      input(type="hidden" name="roomName" value=room.roomName)
+      button(type="submit" onClick="return confirmButton()").btn.btn-danger この部屋を削除する
 
     main(role="main" class="container")
 

@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const hash = require('../lib/security/hash.js');
-const { authenticate, authenticateLocal , authorize } = require('../lib/security/accountcontrol.js');
+const { authenticate, authenticateLocal, authorize } = require('../lib/security/accountcontrol.js');
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const { MAX_ITEM_PER_PAGE } = require('../config/app.config.js').search;
 const MongoClient = require('mongodb').MongoClient;
+const { decryptString } = require('../lib/security/encrypt.js');
 
 router.get('/signup', (req, res, next) => {
   res.render('./account/signup.pug');
@@ -17,11 +18,11 @@ router.post('/signup', (req, res, next) => {
   const user = {
     username: username,
     userId: userId,
-    password: hash.digest(password)
+    password: hash.digest(password) //パスワードのハッシュ化
   };
 
-  let errors = validateSignUpData(req.body);
-  if (errors) {
+  const errors = validateSignUpData(req.body);
+  if (errors) { // バリデーションしたときにエラーが出ればエラー表示
     res.render('./account/signup.pug', {
       errors: errors,
       username: username,
@@ -33,22 +34,21 @@ router.post('/signup', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-
     db.collection('users')
-      .find()
-      .toArray()
-      .then((users) => {
-        const errors = userIdExist(users, userId);
-        if (errors) {
+      .findOne({ userId: userId })
+      .then((foundUser) => {
+        if (foundUser) {
+          const errors = { userIdExist: `${userId}は既に使用されています` };
           res.render('./account/signup.pug', {
             errors: errors,
             username: username,
+            userId: userId
           });
         } else {
           db.collection('users')
             .insertOne(user)
             .then(() => {
-              authenticateLocal(req, res, next);
+              authenticateLocal(req, res, next); //自動でログインする
             }).catch((error) => {
               throw error;
             }).then(() => {
@@ -63,7 +63,7 @@ router.get('/login', (req, res, next) => {
   res.render('./account/login.pug', { error: req.flash('error') });
 });
 
-router.post('/login', authenticate());
+router.post('/login', authenticate()); //ログイン処理
 
 router.post('/logout', (req, res, next) => {
   req.logout();
@@ -80,10 +80,16 @@ router.get('/:userId', authorize(), (req, res, next) => {
     db.collection('users')
       .findOne({ userId: userId })
       .then((user) => {
-        res.render('./account/useredit.pug', {
-          user: user,
-          error: req.flash('error')
-        });
+        if (user) {
+          res.render('./account/useredit.pug', {
+            user: user,
+            error: req.flash('error')
+          });
+        } else {
+          const err = new Error('指定されたユーザーは見つかりません');
+          err.status = 404;
+          next(err);
+        }
       }).catch((error) => {
         throw error;
       }).then(() => {
@@ -93,54 +99,7 @@ router.get('/:userId', authorize(), (req, res, next) => {
 });
 
 router.post('/:userId', authorize(), (req, res, next) => {
-  if (parseInt(req.query.edit) === 1) {
-    const username = req.body.username;
-    const oldUserId = req.params.userId;
-    const newUserId = req.body.userId;
-
-    if (username === '' || newUserId === '') {
-      req.flash('error', 'ユーザー名またはユーザーIDは未入力です');
-      res.redirect(`/account/${oldUserId}`);
-      return;
-    }
-
-    MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
-      const db = client.db(DATABASE);
-
-      db.collection('users')
-        .find()
-        .toArray()
-        .then((users) => {
-          const errors = userIdExist(users, newUserId);
-          if (errors) {
-            req.flash('error', newUserId + 'は既に登録されています');
-            res.redirect(`/account/${oldUserId}`);
-          } else {
-            Promise.all([
-              db.collection('users')
-                .findOneAndUpdate({ userId: oldUserId }, { '$set': { userId: newUserId, username: username } }),
-              db.collection('rooms')
-                .updateMany({ createdBy: oldUserId }, { '$set': { createdBy: newUserId } }),
-              db.collection('messages')
-                .updateMany({ createdBy: oldUserId }, { '$set': { createdBy: newUserId } })
-            ]).then(() => {
-              db.collection('users')
-                .find()
-                .toArray()
-                .then((users) => {
-                  console.log(users);
-                });
-              req.flash('success', 'ユーザー情報を変更しました');
-              res.redirect('/');
-            }).catch((error) => {
-              throw error;
-            }).then(() => {
-              client.close();
-            });
-          }
-        });
-    });
-  } else if (parseInt(req.query.delete) === 1) {
+  if (parseInt(req.query.delete) === 1) {
     req.logout();
 
     const userId = req.params.userId;
@@ -157,6 +116,10 @@ router.post('/:userId', authorize(), (req, res, next) => {
           res.redirect('/');
         });
     });
+  } else {
+    const err = new Error('不正なリクエストです');
+    err.status = 400;
+    next(err);
   }
 });
 
@@ -171,69 +134,84 @@ router.get('/:userId/rooms', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    const query = {
-      $and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { createdBy: userId }]
-    };
+    db.collection('users')
+      .findOne({ userId: userId }) //パラメータのuserIdからユーザーを所得
+      .then((user) => {
+        if (user) {
+          const query = {
+            $and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { createdBy: userId }]
+          };
+          Promise.all([
+            db.collection('rooms')
+              .find(query)
+              .count(),
+            db.collection('rooms')
+              .find(query)
+              .sort({ createdDate: -1 })
+              .skip((page - 1) * MAX_ITEM_PER_PAGE)
+              .limit(MAX_ITEM_PER_PAGE)
+              .toArray()
+          ]).then((results) => {
+            const publicRooms = results[1].filter((a) => (a.isPublic === true));
+            const data = {
+              keyword: keyword,
+              count: results[0],
+              rooms: results[1],
+              publicRooms: publicRooms,
+              pagination: {
+                max: Math.ceil(results[0] / MAX_ITEM_PER_PAGE),
+                current: page
+              }
+            };
 
-    Promise.all([
-      db.collection('rooms')
-        .find(query)
-        .count(),
-      db.collection('rooms')
-        .find(query)
-        .sort({ createdDate: -1 })
-        .skip((page - 1) * MAX_ITEM_PER_PAGE)
-        .limit(MAX_ITEM_PER_PAGE)
-        .toArray()
-    ]).then((results) => {
-      const data = {
-        keyword: keyword,
-        count: results[0],
-        rooms: results[1],
-        pagination: {
-          max: Math.ceil(results[0] / MAX_ITEM_PER_PAGE),
-          current: page
+            res.render('./account/createdRoom.pug', {
+              data: data,
+              createUser: user, // 部屋作成者
+              user: req.user,
+              success: req.flash('success'),
+              error: req.flash('error')
+            });
+          }).catch((error) => {
+            throw error;
+          }).then(() => {
+            client.close();
+          });
+        } else {
+          const err = new Error('指定されたユーザーは存在しません');
+          err.status = 404;
+          next(err);
         }
-      };
-      res.render('./account/createdRoom.pug', {
-        data: data,
-        user: req.user,
-        successMessage: req.flash('success'),
-        errorMessage: req.flash('error')
       });
-    }).catch((error) => {
-      throw error;
-    }).then(() => {
-      client.close();
-    });
+
 
   });
 });
 
 router.get('/:userId/rooms/:roomId', (req, res, next) => {
   const roomId = req.params.roomId;
-  const userId = req.params.userId;
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    Promise.all([
-      db.collection('rooms')
-        .findOne({roomId: roomId}),
-      db.collection('users')
-        .findOne({userId: userId})
-    ]).then(results => {
-      const room = results[0];
-      const user = results[1];
-
-      res.render('./account/roomedit.pug', {
-        room: room,
-        user: user
+    db.collection('rooms')
+      .findOne({ roomId: roomId })
+      .then((room) => {
+        if (isMine(req, room)) { // 部屋が存在するか,また部屋を作成したユーザーだけが編集画面に行ける
+          room.roomPassword = decryptString(room.roomPassword);
+          res.render('./account/roomedit.pug', {
+            room: room,
+            user: req.user,
+            error: req.flash('error')
+          });
+        } else {
+          const err = new Error('指定された部屋がない、または編集する権限がありません');
+          err.status = 404;
+          next(err);
+        }
       }).catch((error) => {
         throw error;
       }).then(() => {
         client.close();
       });
-    });
   });
 });
 
@@ -251,22 +229,57 @@ router.post('/:userId/rooms/:roomId', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    const query = {roomId: roomId};
-
-    const set = {'$set': {roomName: roomName, isPublic: isPublic}};
-
     db.collection('rooms')
-      .findOneAndUpdate(query, set)
-      .then(() => {
-        req.flash('success', '部屋を編集しました');
-        res.redirect(`/account/${userId}/rooms`);
-      }).catch((error) => {
-        throw error;
-      }).then(() => {
-        client.close();
+      .findOne({ roomId: roomId })
+      .then((room) => {
+        if (isMine(req, room)) { // 部屋が存在するか,また部屋を作成したユーザーだけが編集できる
+          if (parseInt(req.query.edit) === 1) { // 編集のとき
+            db.collection('rooms')
+              .findOneAndUpdate({ roomId: roomId }, { '$set': { roomName: roomName, isPublic: isPublic } })
+              .then(() => {
+                req.flash('success', '部屋を編集しました');
+                return res.redirect(`/account/${userId}/rooms`);
+              }).catch((error) => {
+                throw error;
+              }).then(() => {
+                client.close();
+              });
+          } else if (parseInt(req.query.delete) === 1) { // 削除のとき
+            Promise.all([
+              db.collection('rooms')
+                .findOneAndDelete({ roomId: roomId }),
+              db.collection('messages')
+                .deleteMany({ roomId: roomId })
+            ]).then(() => {
+              req.flash('success', '部屋を削除しました');
+              res.redirect(`/account/${userId}/rooms`);
+            }).catch((error) => {
+              throw error;
+            }).then(() => {
+              client.close();
+            });
+          } else {
+            const err = new Error('不正なリクエストです');
+            err.status = 400;
+            next(err);
+          }
+        } else {
+          const err = new Error('指定された部屋がない、または、編集する権限がありません');
+          err.status = 404;
+          next(err);
+        }
       });
   });
 });
+
+/**
+ * 自分が作成した部屋かどうか判定する
+ * @param {object} req 
+ * @param {object} room 
+ */
+function isMine(req, room) {
+  return room && (req.user.userId === room.createdBy);
+}
 
 /**
  * 
@@ -274,6 +287,7 @@ router.post('/:userId/rooms/:roomId', (req, res, next) => {
  * @param {String} userId
  * 新規登録されたユーザーのユーザーIDが既に登録されているか判定する 
  */
+
 function userIdExist(users, userId) {
   let isUserIdExist = false;
   let errors = {};
@@ -293,12 +307,13 @@ function userIdExist(users, userId) {
   return isUserIdExist ? errors : undefined;
 }
 
+
 /**
  * 
  * @param {Object} body 
  * 新規登録 で送られたデータをバリデーション
  */
-function validateSignUpData(body, users, userId) {
+function validateSignUpData(body) {
   let isValidate = true;
   let errors = {};
 

@@ -17,6 +17,7 @@ html(lang="ja")
             if isErrorExist
               each error in errors
                 div.alert.alert-danger #{error}
+            p #{userIdExistError}
             div.form-group.row
               div.col-sm-2
               label.col-sm-4.col-form-label(for="username") ユーザー名 :

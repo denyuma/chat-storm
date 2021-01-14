@@ -7,32 +7,6 @@ const { encryptString, decryptString } = require('../lib/security/encrypt');
 const { CONNECTION_URL, DATABASE, OPTIONS } = require('../config/mongodb.config.js');
 const MongoClient = require('mongodb').MongoClient;
 
-// roomPasswordを作成
-function createPasswordGenerator() {
-  return encryptString(require('crypto').randomBytes(4).toString('hex'));
-}
-
-
-// roomIdを作成 (roomIdは被らないようにしている)
-function createRoomIdGenerator(rooms) {
-  let roomId = require('crypto').randomBytes(4).toString('hex');
-  let isRoomIdExist = rooms.some(room => room.roomId === roomId);
-
-  if (isRoomIdExist) {
-    do {
-      roomId = require('crypto').randomBytes(4).toString('hex');
-      isRoomIdExist = rooms.some(room => room.roomId === roomId);
-      if (!isRoomIdExist) {
-        break;
-      }
-    } while (isRoomIdExist);
-    return roomId;
-  } else {
-    return roomId;
-  }
-}
-
-
 router.get('/', (req, res, next) => {
   // tokenとsessionにcsrfを作成
   tokens.secret((error, secret) => {
@@ -49,15 +23,17 @@ router.get('/', (req, res, next) => {
     db.collection('rooms')
       .findOne({ roomId: roomId })
       .then((room) => {
-        const roomName = room.roomName;
-        const roomId = room.roomId;
-        const roomPassword = decryptString(room.roomPassword);
-        res.render('./newroom.pug', {
-          roomName: roomName,
-          roomId: roomId,
-          roomPassword: roomPassword,
-          user: req.user
-        });
+        if (room) {
+          room.roomPassword = decryptString(room.roomPassword);
+          res.render('./newroom.pug', {
+            room: room,
+            user: req.user
+          });
+        } else {
+          const err = new Error('指定された部屋は存在しません');
+          err.status = 404;
+          next(err);
+        }
       }).catch((error) => {
         throw error;
       }).then(() => {
@@ -81,25 +57,23 @@ router.post('/', (req, res, next) => {
       .find()
       .toArray()
       .then((rooms) => {
-        const roomName = req.body.roomName;
-        const isPublic = (req.body.isPublic === 'on') ? true : false;
-        const roomId = createRoomIdGenerator(rooms);
-        const roomPassword = createPasswordGenerator();
-        const createdBy = req.user ? req.user.userId : req.cookies.tracking_key;
-        db.collection('rooms').insertOne({
-          roomName: roomName,
-          roomId: roomId,
-          roomPassword: roomPassword,
-          createdBy: createdBy,
+        const room = {
+          roomName: req.body.roomName,
+          roomId: createRoomIdGenerator(rooms),
+          roomPassword: createPasswordGenerator(),
+          createdBy: req.user ? req.user.userId : req.cookies.tracking_key,
           createdDate: new Date().toISOString(),
-          isPublic: isPublic
-        }).then(() => {
-          res.redirect(`/newroom?roomId=${roomId}`);
-        }).catch((error) => {
-          throw error;
-        }).then(() => {
-          client.close();
-        });
+          isPublic: (req.body.isPublic === 'on') ? true : false
+        };
+        db.collection('rooms')
+          .insertOne(room)
+          .then(() => {
+            res.redirect(`/newroom?roomId=${room.roomId}`);
+          }).catch((error) => {
+            throw error;
+          }).then(() => {
+            client.close();
+          });
       });
   });
 });
@@ -115,6 +89,31 @@ function validateData(body) {
   }
 
   return isValidated ? undefined : errors;
+}
+
+// roomPasswordを作成
+function createPasswordGenerator() {
+  return encryptString(require('crypto').randomBytes(4).toString('hex'));
+}
+
+
+// roomIdを作成 (roomIdは被らないようにしている)
+function createRoomIdGenerator(rooms) {
+  let roomId = require('crypto').randomBytes(4).toString('hex');
+  let isRoomIdExist = rooms.some(room => room.roomId === roomId);
+
+  if (isRoomIdExist) {
+    do {
+      roomId = require('crypto').randomBytes(4).toString('hex');
+      isRoomIdExist = rooms.some(room => room.roomId === roomId);
+      if (!isRoomIdExist) {
+        break;
+      }
+    } while (isRoomIdExist);
+    return roomId;
+  } else {
+    return roomId;
+  }
 }
 
 module.exports = router;

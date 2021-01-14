@@ -33,7 +33,10 @@ module.exports = {
     ],
     'no-console': [
       'off'
-    ]
+    ],
+    'consistent-return': [
+      'error'
+    ],
   },
   "parserOptions": {
     "sourceType": "module"

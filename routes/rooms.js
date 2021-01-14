@@ -27,16 +27,31 @@ router.get('/', (req, res, next) => {
         .find(query)
         .count(),
       db.collection('rooms')
-        .find(query)
-        .sort({ createdDate: -1 })
-        .skip((page - 1) * MAX_ITEM_PER_PAGE)
-        .limit(MAX_ITEM_PER_PAGE)
+        .aggregate([
+          { $match: {$and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { isPublic: true }]}},
+          { $sort: {createdDate: -1}},
+          { $skip: (page - 1) * MAX_ITEM_PER_PAGE},
+          { $limit: MAX_ITEM_PER_PAGE},
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'createdBy',
+              foreignField: 'userId',
+              as: 'user'
+            }
+          }
+        ])
         .toArray()
     ]).then((results) => {
+      const count = results[0];
+      const rooms = results[1];
+      // 部屋作成者がアカウント登録しているときroom.usernameにuser.usernameを付与、なければroom.createdBy
+      rooms.map((room) => room.username = ( room.user[0] !== undefined ? room.user[0].username : room.createdBy)); 
+      console.log(rooms);
       const data = {
         keyword: keyword,
-        count: results[0],
-        rooms: results[1],
+        count: count,
+        rooms: rooms,
         pagination: {
           max: Math.ceil(results[0] / MAX_ITEM_PER_PAGE),
           current: page
@@ -73,17 +88,16 @@ router.get('/room', (req, res, next) => {
       // tokenを削除
       delete req.session._csrf;
       res.clearCookie('_csrf');
-
-      const roomName = results[0].roomName;
-      const roomId = results[0].roomId;
-      const roomPassword = decryptString(results[0].roomPassword);
+      const room = {
+        roomName: results[0].roomName,
+        roomId: results[0].roomId,
+        roomPassword: decryptString(results[0].roomPassword)
+      };
       const messages = results[1];
       res.render('./room.pug', {
-        roomName: roomName,
-        roomId: roomId,
-        roomPassword: roomPassword,
-        messages: messages,
-        user: req.user
+        user: req.user,
+        room: room,
+        messages: messages
       });
     }).catch((error) => {
       throw error;
@@ -115,16 +129,12 @@ router.post('/room/:roomId/post', (req, res, next) => {
     const userId = req.user ? req.user.userId : req.cookies.tracking_key;
     const createdDate = req.body.createdDate;
 
-    Promise.all([
-      db.collection('rooms')
-        .find({ roomId: roomId }),
-      db.collection('messages').insertOne({
-        roomId: roomId,
-        message: message,
-        createdBy: userId,
-        createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
-      })
-    ]).then((results) => {
+    db.collection('messages').insertOne({
+      roomId: roomId,
+      message: message,
+      createdBy: userId,
+      createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
+    }).then(() => {
       res.redirect(`/rooms/room?roomId=${roomId}`);
     }).catch(error => {
       throw error;

@@ -11,18 +11,15 @@ html(lang="ja")
     p #{error}
 
     h3.my-3 アカウントの編集
-    form(method="post" action=`/account/${user.userId}?edit=1`)
-      div.form-group.raw
-        label(for="username").col-3 ユーザー名
-        input(type="text" name="username" value=user.username)#username.form-control.col-4
-      div.form-group.raw
-        label(for="userId").col-3 ユーザーID
-        input(type="text" name="userId" value=user.userId)#userId.form-control.col-4
-      div
-        button(type="submit").btn.btn-info 以上の内容で編集する
+    div.form-group.raw
+      label(for="username").col-3 ユーザー名
+      p.col-4 #{user.username}
+    div.form-group.raw
+      label(for="userId").col-3 ユーザーID
+      p.col-4 #{user.userId}
 
     form(method="post" action=`/account/${user.userId}?delete=1`)
-      button(type="submit" onClick="confirm('本当に削除しますか?')").btn.btn-danger アカウントを消去する
+      button(type="submit" onClick="return confirmButton()").btn.btn-danger アカウントを消去する
 
     main(role="main" class="container")
 
