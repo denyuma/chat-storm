@@ -28,10 +28,10 @@ router.get('/', (req, res, next) => {
         .count(),
       db.collection('rooms')
         .aggregate([
-          { $match: {$and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { isPublic: true }]}},
-          { $sort: {createdDate: -1}},
-          { $skip: (page - 1) * MAX_ITEM_PER_PAGE},
-          { $limit: MAX_ITEM_PER_PAGE},
+          { $match: { $and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { isPublic: true }] } },
+          { $sort: { createdDate: -1 } },
+          { $skip: (page - 1) * MAX_ITEM_PER_PAGE },
+          { $limit: MAX_ITEM_PER_PAGE },
           {
             $lookup: {
               from: 'users',
@@ -46,7 +46,7 @@ router.get('/', (req, res, next) => {
       const count = results[0];
       const rooms = results[1];
       // 部屋作成者がアカウント登録しているときroom.usernameにuser.usernameを付与、なければroom.createdBy
-      rooms.map((room) => room.username = ( room.user[0] !== undefined ? room.user[0].username : room.createdBy)); 
+      rooms.map((room) => room.username = (room.user[0] !== undefined ? room.user[0].username : room.createdBy));
       console.log(rooms);
       const data = {
         keyword: keyword,
@@ -71,11 +71,11 @@ router.get('/', (req, res, next) => {
 
 
 router.get('/room', (req, res, next) => {
+  const roomId = req.query.roomId || req.body.roomId;
 
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);
 
-    const roomId = req.query.roomId || req.body.roomId;
     const query = { roomId: { $eq: roomId } };
 
     Promise.all([
@@ -108,15 +108,15 @@ router.get('/room', (req, res, next) => {
 });
 
 router.post('/room', (req, res, next) => {
+  const roomId = req.query.roomId || req.body.roomId;
   // 部屋作成時と入室時tokenが違うかった場合Errorを出す。
   const secret = req.session._csrf;
   const token = req.cookies._csrf;
-
+  
   if (tokens.verify(secret, token) === false) {
     throw new Error('Invalid Token');
   }
 
-  const roomId = req.query.roomId || req.body.roomId;
   res.redirect(`/rooms/room?roomId=${roomId}`);
 });
 

@@ -21,7 +21,7 @@ html(lang="ja")
               div.col-sm-3
               label.col-sm-2.col-form-label(for="password" ) パスワード :
               input.col-sm-4.form-control(type="text" name="password" id="password" )
-            input.btn.btn-success(type="submit" value="ログイン" id="loginButton" )
+            input.btn.btn-success(type="submit" value="ログイン" id="loginButton" onclick="disableButton(this);")
       -var isErrorExist = (error && error.length !== 0)
       if isErrorExist
         div.alert.alert-danger 

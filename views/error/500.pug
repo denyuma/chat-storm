@@ -35,6 +35,6 @@ html(lang="ja")
             td(style="text-align: initial;")
               span #{errorData.stack}
             
-        a(href="/").btn.btn-secondary ホームへ戻る
+        a(href="/" onclick="disableButton(this);").btn.btn-secondary ホームへ戻る
         
     include ../_share/javascripts.pug

@@ -34,7 +34,7 @@ html(lang="ja")
               div.col-sm-2
               label.col-sm-4.col-form-label(for="passwordConfirm" ) パスワード ※再確認 :
               input.col-sm-4.form-control(type="text" name="passwordConfirm" id="passwordConfirm" )
-            input.btn.btn-success(type="submit" value="登録" )
+            input.btn.btn-success(type="submit" value="登録" onclick="disableButton(this);")
         
 
     include ../_share/javascripts.pug

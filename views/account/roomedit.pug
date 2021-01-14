@@ -25,7 +25,7 @@ html(lang="ja")
         label(for="isPublic").col-3 部屋を公開する
         input(type="checkbox" name="isPublic" checked=room.isPublic ? true : false).form-control.col-4
       div
-        button(type="submit").btn.btn-info 以上の内容で編集する
+        button(type="submit" onclick="disableButton(this);").btn.btn-info 以上の内容で編集する
 
     form(method="post" action=`/account/${user.userId}/rooms/${room.roomId}?delete=1`)
       input(type="hidden" name="roomId" value=room.roomId)

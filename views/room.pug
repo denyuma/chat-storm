@@ -24,26 +24,19 @@ html(lang="en")
             td #{room.roomPassword}
 
     
-    div(id="messages" data-js-selector="messages" class="items" )
+    div(id="messages" class="items" )
       if messages
         each message in messages
           div(class="item")
             p(class="message") #{message.message}
             p #{message.createdDate}
     
-    form(id="messageform" data-js-selector="messageform" )
-      textarea(name="message", id="message" ,data-js-selector="message" , cols="40", rows="4")
+    form(id="messageform" )
+      textarea(name="message" id="message" cols="40" rows="4")
       button(
         type="submit"
-        class="message-send-button"
-        data-room-name=room.roomName
         data-room-id=room.roomId
-        data-room-password=room.roomPassword
-      ).btn.btn-primary 送信
+      )#message-send-button.btn.btn-primary 送信
       
-    include _share/javascripts.pug
   script(src="/socket.io/socket.io.js")
-  script(src="https://code.jquery.com/jquery-3.4.1.min.js" )
-  script(src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
-  script(src="/public/javascripts/room.js" type="module" )
-  script(src="/public/javascripts/sort.js" type="module" )
+  include _share/javascripts.pug

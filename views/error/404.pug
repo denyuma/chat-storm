@@ -20,6 +20,6 @@ html(lang="ja")
               span #{errorData.url}
               span &nbsp;
               span #{(errorData.protocol || '').toUpperCase()}/#{errorData.version}
-        a(href="/").btn.btn-secondary ホームへ戻る
+        a(href="/" onclick="disableButton(this);").btn.btn-secondary ホームへ戻る
         
     include ../_share/javascripts.pug

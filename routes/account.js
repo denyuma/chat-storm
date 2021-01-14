@@ -164,7 +164,7 @@ router.get('/:userId/rooms', (req, res, next) => {
               }
             };
 
-            res.render('./account/createdRoom.pug', {
+            res.render('./account/rooms/roomlist.pug', {
               data: data,
               createUser: user, // 部屋作成者
               user: req.user,
@@ -280,33 +280,6 @@ router.post('/:userId/rooms/:roomId', (req, res, next) => {
 function isMine(req, room) {
   return room && (req.user.userId === room.createdBy);
 }
-
-/**
- * 
- * @param {Array} users 
- * @param {String} userId
- * 新規登録されたユーザーのユーザーIDが既に登録されているか判定する 
- */
-
-function userIdExist(users, userId) {
-  let isUserIdExist = false;
-  let errors = {};
-
-  for (let i = 0; i < users.length; i++) {
-    console.log(users[i]);
-    isUserIdExist = (userId === users[i].userId) ? true : false;
-    if (isUserIdExist) {
-      break;
-    } else {
-      continue;
-    }
-  }
-
-  errors.userIdExist = isUserIdExist ? `${userId} は既に登録されています` : undefined;
-
-  return isUserIdExist ? errors : undefined;
-}
-
 
 /**
  * 

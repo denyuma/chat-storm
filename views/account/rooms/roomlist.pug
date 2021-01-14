@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    include ../../_share/stylesheets.pug
+    title chat-storm
+  body
+    include ../../_share/navbar.pug
+
+    main(role="main" class="container")
+      if error
+        p #{error}
+      
+      if success
+        p #{success}
+
+      h2.mt-5 #{createUser.username} が作成した部屋の一覧
+
+      div.float-right
+        span.badge.badge-secondary #{data.count}件
+      
+      form.form-inline.mt-5.mb-5(method="get" action=`/account/${createUser.userId}/rooms`)
+        input.form-control(type="text" id="keyword" name="keyword" value=data.keyword)
+        input.btn.btn-success.ml-2(type="submit" value="検索")
+      
+      if user
+        - var isCreateUser = (createUser.userId === user.userId )
+        if isCreateUser
+          each room in data.rooms
+            include ./_allroom.pug
+
+        else
+          each room in data.publicRooms
+            include ./_publicroom.pug
+      else 
+        each room in data.publicRooms
+          include ./_publicroom.pug
+
+      
+      nav
+        ul.pagination
+          - for (let i = 1; i <= data.pagination.max; i++)
+            - if (data.pagination.current !== i)
+              li.page-item
+                a.page-link(href=`/account/${createUser.userId}/rooms?keyword=${data.keyword}&page=${i}`) #{i}
+            - else
+              li.page-item.active
+                span.page-link.disabled #{i}
+    include ../../_share/javascripts.pug
