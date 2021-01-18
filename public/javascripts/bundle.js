@@ -94,24 +94,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bootstrap__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var sortablejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var popper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
+/* harmony import */ var sortablejs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
 
 
 
 var global = Function('return this;')();
 global.jQuery = jquery__WEBPACK_IMPORTED_MODULE_0___default.a;
 
+
  // メッセージをソートする
 
 var messages = document.getElementById('messages');
-new sortablejs__WEBPACK_IMPORTED_MODULE_2__["default"](messages, {
+new sortablejs__WEBPACK_IMPORTED_MODULE_3__["default"](messages, {
   animation: 200
 }); // メッセージをpostする
 
 var socket = io();
 var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
 var $messageform = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messageform');
-var $message = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message');
+var $message = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message'); // postされたときの設定
+
 socket.on('post', function (message) {
   var text = "<div class=\"item\" > <p class=\"message\" >".concat(message.text, "</p> <p>").concat(message.createdDate, "</p> </div>");
   $messages.append(text);
@@ -130,29 +133,20 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(funct
     var minute = date.getMinutes();
     var second = date.getSeconds();
     var createdDate = "".concat(year, "/").concat(month, "/").concat(day, " ").concat(hour, ":").concat(minute, ":").concat(second);
+    var post = {
+      text: message,
+      createdDate: createdDate
+    };
+    socket.emit('post', post);
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/rooms/room/".concat(roomId, "/post"), {
       message: message,
       createdDate: createdDate
     });
+    $message.val('');
   });
 });
 $messageform.submit(function (e) {
   e.preventDefault();
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth() + 1;
-  var day = date.getDate();
-  var hour = date.getHours();
-  var minute = date.getMinutes();
-  var second = date.getSeconds();
-  var createdDate = "".concat(year, "/").concat(month, "/").concat(day, " ").concat(hour, ":").concat(minute, ":").concat(second);
-  var message = $message.val();
-  var post = {
-    text: message,
-    createdDate: createdDate
-  };
-  socket.emit('post', post);
-  $message.val('');
 });
 
 /***/ }),

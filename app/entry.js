@@ -18,8 +18,13 @@ const $messages = $('#messages');
 const $messageform = $('#messageform');
 const $message = $('#message');
 
+// postされたときの設定
 socket.on('post', (message) => {
-  const text = `<div class="item" > <p class="message" >${message.text}</p> <p>${message.createdDate}</p> </div>`;
+  const text = 
+    ` <div class="item" >
+        <p class="message" >${message.text}</p> 
+        <p>${message.createdDate}</p> 
+      </div>`;
   $messages.append(text);
 });
 
@@ -41,34 +46,23 @@ $('#message-send-button').each((i, e) => {
     const second = date.getSeconds();
 
     const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
+
+    const post = {
+      text: message,
+      createdDate: createdDate
+    };
+
+    socket.emit('post', post);
+
     $.post(`/rooms/room/${roomId}/post`, {
       message: message,
       createdDate: createdDate
     });
+
+    $message.val('');
   });
 });
 
-
 $messageform.submit((e) => {
   e.preventDefault();
-
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1);
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const second = date.getSeconds();
-
-  const createdDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
-
-  const message = $message.val();
-
-  const post = {
-    text: message,
-    createdDate: createdDate
-  };
-
-  socket.emit('post', post);
-  $message.val('');
 });
