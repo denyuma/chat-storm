@@ -113,17 +113,29 @@ new sortablejs__WEBPACK_IMPORTED_MODULE_3__["default"](messages, {
 var socket = io();
 var $messages = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messages');
 var $messageform = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#messageform');
-var $message = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message'); // postされたときの設定
+var $message = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message');
+var $messageDeleteForm = jquery__WEBPACK_IMPORTED_MODULE_0___default()('.message-delete-form'); // postされたときの設定
 
-socket.on('post', function (message) {
-  var text = "<div class=\"item\" > <p class=\"message\" >".concat(message.text, "</p> <p>").concat(message.createdDate, "</p> </div>");
+socket.on('post', function (post) {
+  var text = " <div class=\"item\" align=\"center\" id=".concat(post.messageId, " >\n        <div class=\"item-message\" >\n          <p class=\"item-message-value\" >").concat(post.message, "</p> \n        </div>\n        <div class=\"message-data mb-2\">\n          <span class=\"item-createdBy mr-3\" >").concat(post.username, "</span>\n          <span class=\"item-createdDate mr-3 \" >").concat(post.createdDate, "</span>\n          <form action=\"/rooms/room?roomId=").concat(post.roomId, "\"  class=\"message-delete-form\">\n            <button type=\"submit\" class=\"btn delete-message-button\" style=\"display:inline;\" data-message-id=").concat(post.messageId, " data-room-id=").concat(post.roomId, ">\n              <span class=\"button-icon\"> <i class=\"fas fa-trash-alt\" > </i> </span> \n            </button>\n          </form>\n        </div>\n      </div>");
   $messages.append(text);
+});
+socket.on('delete-message', function (messageId) {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()("#".concat(messageId)).remove();
 });
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(function (i, e) {
   var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
-  button.click(function () {
+  button.on('click', function () {
     var roomId = button.data('room-id');
-    var message = $message.val(); // メッセージがpostされた時間を設定
+    var messageId = createUuid();
+    var username = button.data('username');
+    var message = $message.val();
+
+    if (!message) {
+      //入力欄が空の時何もしない
+      return -1;
+    } // メッセージがpostされた時間を設定
+
 
     var date = new Date();
     var year = date.getFullYear();
@@ -134,18 +146,39 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(funct
     var second = date.getSeconds();
     var createdDate = "".concat(year, "/").concat(month, "/").concat(day, " ").concat(hour, ":").concat(minute, ":").concat(second);
     var post = {
-      text: message,
-      createdDate: createdDate
+      message: message,
+      messageId: messageId,
+      createdDate: createdDate,
+      username: username,
+      roomId: roomId
     };
     socket.emit('post', post);
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/rooms/room/".concat(roomId, "/post"), {
       message: message,
+      messageId: messageId,
       createdDate: createdDate
     });
     $message.val('');
   });
 });
-$messageform.submit(function (e) {
+console.log('hoge');
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.delete-message-button').each(function (i, e) {
+  var button = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e);
+  button.on('click', function () {
+    console.log('fuga');
+    var messageId = button.data('message-id');
+    var roomId = button.data('room-id');
+    socket.emit('delete-message', messageId);
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/rooms/room/".concat(roomId, "/post?delete=1"), {
+      roomId: roomId,
+      messageId: messageId
+    });
+  });
+});
+$messageform.on('submit', function (e) {
+  e.preventDefault();
+});
+$messageDeleteForm.on('submit', function (e) {
   e.preventDefault();
 });
 

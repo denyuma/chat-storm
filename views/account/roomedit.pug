@@ -8,30 +8,38 @@ html(lang="ja")
   body
     include ../_share/navbar.pug
 
-    p #{error}
-
-    h3.my-3 部屋情報の編集
-    form(method="post" action=`/account/${user.userId}/rooms/${room.roomId}?edit=1`)
-      div.form-group.raw
-        label(for="roomName").col-3 部屋名
-        input(type="text" name="roomName" value=room.roomName).form-control.col-4
-      div.form-group.raw
-        label(for="roomId").col-3 ルームID
-        p.form-control.col-4(name="roomId") #{room.roomId}
-      div.form-group.raw
-        label(for="roomPassword").col-3 ルームパスワード
-        p.form-control.col-4(name="roomPassword") #{room.roomPassword}
-      div.form-group.raw
-        label(for="isPublic").col-3 部屋を公開する
-        input(type="checkbox" name="isPublic" checked=room.isPublic ? true : false).form-control.col-4
-      div
-        button(type="submit" onclick="disableButton(this);").btn.btn-info 以上の内容で編集する
-
-    form(method="post" action=`/account/${user.userId}/rooms/${room.roomId}?delete=1`)
-      input(type="hidden" name="roomId" value=room.roomId)
-      input(type="hidden" name="roomName" value=room.roomName)
-      button(type="submit" onClick="return confirmButton()").btn.btn-danger この部屋を削除する
-
     main(role="main" class="container")
+      - var isErrorExist = (error && error.length !== 0)
+      if isErrorExist
+        div.alert.alert-danger.mt-5
+          i(class="fas fa-exclamation-circle")
+          b #{error}
+
+      h3.my-5 部屋情報の編集
+      form(method="post" style="font-size:20px;" action=`/account/${user.userId}/rooms/${room.roomId}?edit=1`)
+        div.form-group.row.my-3
+          div.col-sm-2
+          label(for="roomName").col-3 部屋名
+          input.form-control.col-4(type="text" name="roomName" style="text-align:center;" value=room.roomName maxlength=50 )
+        div.form-group.row.my-3
+          div.col-sm-2
+          label(for="roomId").col-sm-3 ルームID
+          div.col-sm-4
+            input.form-control-plaintext(type="text" readonly style="color:#f0eee9; text-align:center;" name="roomId" value=room.roomId) 
+        div.form-group.row.my-3
+          div.col-sm-2
+          label(for="roomPassword").col-sm-3 ルームパスワード
+          div.col-sm-4
+            input.form-control-plaintext(type="text" readonly style="color:#f0eee9; text-align:center;" name="roomPassword" value=room.roomPassword) 
+        div.custom-control.custom-switch.my-3
+          input.custom-control-input.col-sm-1(type="checkbox" name="isPublic" checked=room.isPublic ? true : false , id="isPublic")
+          label.custom-control-label.col-sm-2(for="isPublic") 部屋を公開する
+        div
+          button.btn.btn-info.my-4(type="submit" onclick="disableButton(this);") 以上の内容で編集する
+
+      form(method="post" action=`/account/${user.userId}/rooms/${room.roomId}?delete=1`)
+        input(type="hidden" name="roomName" value=room.roomName)
+        input(type="hidden" name="roomId" value=room.roomId)
+        button(type="submit" onClick="return confirmButton()").btn.btn-danger この部屋を削除する
 
     include ../_share/javascripts.pug

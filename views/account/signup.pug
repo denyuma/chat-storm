@@ -9,32 +9,35 @@ html(lang="ja")
     include ../_share/navbar.pug
 
     main(role="main" class="container")
-      div.card.my-5.bg-transparent.border-success.mb-3
-        h4.card-header.border-success 新規登録
-        form(action="/account/signup", method="post")
-          div.card-body
-            -var isErrorExist = (errors && errors.length !== 0)
-            if isErrorExist
-              each error in errors
-                div.alert.alert-danger #{error}
-            p #{userIdExistError}
-            div.form-group.row
-              div.col-sm-2
-              label.col-sm-4.col-form-label(for="username") ユーザー名 :
-              input.col-sm-4.form-control(type="text" name="username" id="username" value=username )
-            div.form-group.row
-              div.col-sm-2
-              label.col-sm-4.col-form-label(for="userId") ユーザーID (半角英数字) :
-              input.col-sm-4.form-control(type="text" name="userId" id="userId" value=userId )
-            div.form-group.row
-              div.col-sm-2
-              label.col-sm-4.col-form-label(for="password" ) パスワード (半角英数字6文字以上) :
-              input.col-sm-4.form-control(type="text" name="password" id="password")
-            div.form-group.row
-              div.col-sm-2
-              label.col-sm-4.col-form-label(for="passwordConfirm" ) パスワード ※再確認 :
-              input.col-sm-4.form-control(type="text" name="passwordConfirm" id="passwordConfirm" )
-            input.btn.btn-success(type="submit" value="登録" onclick="disableButton(this);")
-        
+      -var isErrorExist = (errors && errors.length !== 0)
+        if isErrorExist
+          each error in errors
+            div.alert.alert-danger.mt-5
+              i(class="fas fa-exclamation-circle")
+              b #{error}
+
+      div.card.my-5.bg-transparent.mb-3
+        div.card-body
+          h4 新規登録
+          form(action="/account/signup", method="post")
+            div.card-body
+              p #{userIdExistError}
+              div.form-group.row
+                div.col-sm-2
+                label.col-sm-4.col-form-label(for="username") ユーザー名 :
+                input.col-sm-4.form-control(type="text" name="username" id="username" value=username )
+              div.form-group.row
+                div.col-sm-2
+                label.col-sm-4.col-form-label(for="userId") ユーザーID (半角英数字) :
+                input.col-sm-4.form-control(type="text" name="userId" id="userId" value=userId )
+              div.form-group.row
+                div.col-sm-2
+                label.col-sm-4.col-form-label(for="password" ) パスワード (半角英数字6文字以上) :
+                input.col-sm-4.form-control(type="text" name="password" id="password")
+              div.form-group.row
+                div.col-sm-2
+                label.col-sm-4.col-form-label(for="passwordConfirm" ) パスワード ※再確認 :
+                input.col-sm-4.form-control(type="text" name="passwordConfirm" id="passwordConfirm" )
+              input.btn.btn-success(type="submit" value="登録" onclick="disableButton(this);")
 
     include ../_share/javascripts.pug

@@ -1,16 +1,25 @@
-nav.navbar.navbar-expand-md.navbar-dark.bg-dark
+nav.navbar.navbar-expand-md.navbar-dark.bg-dar
   div.nav
     a(href="/").navbar-brand.ml-10 chat-storm
     ul.navbar-nav.mr-auto
-      li.nav-item
-        a(href="/rooms").nav-link 部屋一覧
+      li.nav-item.mt-2
+        a(href="/rooms").nav-link
+          <span>
+            i.fas.fa-clipboard-list
+          </span> 部屋一覧
     div(class="collapse navbar-collapse" id="navbarsExampleDefault" )
     ul.navbar-nav.mr-auto
       if !user
-        li.nav-item
-          a(href="/account/signup").nav-link 新規登録
-        li.nav-item
-          a(href="/account/login").nav-link ログイン
+        li.nav-item.mt-2
+          a(href="/account/signup").nav-link 
+            <span>
+              i.fas.fa-user-plus
+            </span> 新規登録
+        li.nav-item.mt-2
+          a(href="/account/login").nav-link 
+            <span>
+              i.fas.fa-sign-in-alt
+            </span> ログイン
       if user
         div.dropdown.mt-2.mr-3
           a.btn.btn-info.dropdown-toggle(href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") アカウント
@@ -18,5 +27,5 @@ nav.navbar.navbar-expand-md.navbar-dark.bg-dark
             a.dropdown-item(href=`/account/${user.userId}/rooms`) 作成した部屋一覧
             a.dropdown-item(href=`/account/${user.userId}`) アカウント設定
         form.form-inline.mt-2.mt-md-0(action="/account/logout", method="post")
-          button.btn.btn-outline-success.my-2.my-sm-2(type="submit") ログアウト
+          button.btn.btn-success.my-2.my-sm-2(type="submit") ログアウト
       

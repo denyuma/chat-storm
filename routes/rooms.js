@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const csrf = require('csrf');
 const tokens = new csrf();
+const uuid = require('uuid');
 const { decryptString } = require('../lib/security/encrypt.js');
 const { MAX_ITEM_PER_PAGE } = require('../config/app.config.js').search;
 
@@ -96,6 +97,7 @@ router.get('/room', (req, res, next) => {
       const messages = results[1];
       res.render('./room.pug', {
         user: req.user,
+        guestUser: req.cookies.tracking_key,
         room: room,
         messages: messages
       });
@@ -126,13 +128,15 @@ router.post('/room/:roomId/post', (req, res, next) => {
 
     const roomId = req.params.roomId;
     const message = req.body.message;
-    const userId = req.user ? req.user.userId : req.cookies.tracking_key;
+    const messageId = req.body.messageId;
+    const username = req.user ? req.user.username : req.cookies.tracking_key;
     const createdDate = req.body.createdDate;
 
     db.collection('messages').insertOne({
       roomId: roomId,
       message: message,
-      createdBy: userId,
+      messageId: messageId,
+      createdBy: username,
       createdDate: createdDate || moment(new Date).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm:ss')
     }).then(() => {
       res.redirect(`/rooms/room?roomId=${roomId}`);

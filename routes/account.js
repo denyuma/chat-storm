@@ -145,6 +145,11 @@ router.get('/:userId/rooms', (req, res, next) => {
             db.collection('rooms')
               .find(query)
               .count(),
+            db.collection('rooms') //公開されている部屋の数を所得
+              .find({
+                $and: [{ $or: [{ roomName: regexp }, { roomId: regexp }] }, { createdBy: userId }, {isPublic: true}]
+              })
+              .count(),
             db.collection('rooms')
               .find(query)
               .sort({ createdDate: -1 })
@@ -152,24 +157,24 @@ router.get('/:userId/rooms', (req, res, next) => {
               .limit(MAX_ITEM_PER_PAGE)
               .toArray()
           ]).then((results) => {
-            const publicRooms = results[1].filter((a) => (a.isPublic === true));
+            const publicRooms = results[2].filter((a) => (a.isPublic === true));
             const data = {
               keyword: keyword,
               count: results[0],
-              rooms: results[1],
+              publicRoomsCount: results[1],
+              rooms: results[2],
               publicRooms: publicRooms,
+              isCreateUser: req.user ? (req.user.userId === req.params.userId) : false,
               pagination: {
                 max: Math.ceil(results[0] / MAX_ITEM_PER_PAGE),
                 current: page
               }
             };
-
             res.render('./account/rooms/roomlist.pug', {
               data: data,
               createUser: user, // 部屋作成者
               user: req.user,
-              success: req.flash('success'),
-              error: req.flash('error')
+              success: req.flash('success')
             });
           }).catch((error) => {
             throw error;
@@ -264,7 +269,7 @@ router.post('/:userId/rooms/:roomId', (req, res, next) => {
             next(err);
           }
         } else {
-          const err = new Error('指定された部屋がない、または、編集する権限がありません');
+          const err = new Error('指定された部屋がない、または編集する権限がありません');
           err.status = 404;
           next(err);
         }
@@ -278,7 +283,7 @@ router.post('/:userId/rooms/:roomId', (req, res, next) => {
  * @param {object} room 
  */
 function isMine(req, room) {
-  return room && (req.user.userId === room.createdBy);
+  return room && req.user && (req.user.userId === room.createdBy);
 }
 
 /**

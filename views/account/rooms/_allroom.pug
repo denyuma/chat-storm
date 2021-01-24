@@ -1,7 +1,6 @@
-div.mt-5.mb-5
-  div.card.mt-3.mt-3
-    a(href=`/rooms/room?roomId=${room.roomId}`)
-      div.card-body
-        h5.card-title 部屋名:#{room.roomName}
-        p.card-text 作成者:#{createUser.username} 
-        a.btn.btn-success(type="button", href=`/account/${createUser.userId}/rooms/${room.roomId}`) この部屋情報を編集する
+div.card.my-3
+  a(href=`/rooms/room?roomId=${room.roomId}` )
+    div.card-body( class="card-link room-list")
+      h5.card-title 部屋名:#{room.roomName}
+      p.card-text 作成者:#{createUser.username} 
+      a.btn.btn-success(type="button", onClick=`document.location="/account/${createUser.userId}/rooms/${room.roomId}";`) この部屋情報を編集する

@@ -9,16 +9,19 @@ html(lang="ja")
     include ../../_share/navbar.pug
 
     main(role="main" class="container")
-      if error
-        p #{error}
-      
-      if success
-        p #{success}
+      - var isSuccessExist = (success && success.length !== 0)
+      if isSuccessExist
+        div.alert.alert-success.mt-3
+          h6 #{success}
 
-      h2.mt-5 #{createUser.username} が作成した部屋の一覧
+      h2.my-5 #{createUser.username} が作成した部屋の一覧
 
-      div.float-right
-        span.badge.badge-secondary #{data.count}件
+      if data.isCreateUser
+        div.float-right
+          span.badge.badge-secondary #{data.count}件
+      else
+        div.float-right
+          span.badge.badge-secondary #{data.publicRoomsCount}件
       
       form.form-inline.mt-5.mb-5(method="get" action=`/account/${createUser.userId}/rooms`)
         input.form-control(type="text" id="keyword" name="keyword" value=data.keyword)
@@ -38,7 +41,7 @@ html(lang="ja")
           include ./_publicroom.pug
 
       
-      nav
+      nav.mt-5
         ul.pagination
           - for (let i = 1; i <= data.pagination.max; i++)
             - if (data.pagination.current !== i)

@@ -14,13 +14,13 @@ html(lang="ja")
       table.my-3.table.table-bordered(class="confirm-table")
         tr
           td 部屋名
-          td #{room.roomName}
+          td.td-value.td-room-name #{room.roomName}
         tr
           td ルームID
-          td #{room.roomId}
+          td.td-value #{room.roomId}
         tr
           td ルームパスワード
-          td #{room.roomPassword}
+          td.td-value #{room.roomPassword}
       form(action=`/rooms/room?roomId=${room.roomId}`, method="post")
         input.btn.btn-primary(type="submit" value="入室する" onclick="disableButton(this);" )
     include _share/javascripts.pug

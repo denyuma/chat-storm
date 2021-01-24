@@ -26,6 +26,10 @@ io.on('connection', (socket) => {
     console.log('posted :' + JSON.stringify(post));
     io.emit('post', post);
   });
+  socket.on('delete-message', (messageId) => {
+    console.log('message deleted');
+    io.emit('delete-message', messageId);
+  });
 });
 
 

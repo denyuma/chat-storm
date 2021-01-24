@@ -9,10 +9,16 @@ html(lang="ja")
     include ../_share/navbar.pug
 
     main(role="main" class="container")
-      div.card.my-5.bg-transparent.border-success.mb-3
-        h4.card-header.border-success ログイン
-        form(action="/account/login", method="post")
-          div.card-body
+      -var isErrorExist = (error && error.length !== 0)
+      if isErrorExist
+        div.alert.alert-danger.mt-5
+          i(class="fas fa-exclamation-circle")
+          b #{error}
+          
+      div.card.my-5.bg-transparent
+        div.card-body
+          h4.mb-4 ログイン
+          form(action="/account/login", method="post")
             div.form-group.row
               div.col-sm-3
               label.col-sm-2.col-form-label(for="userId") ユーザーID :
@@ -22,9 +28,7 @@ html(lang="ja")
               label.col-sm-2.col-form-label(for="password" ) パスワード :
               input.col-sm-4.form-control(type="text" name="password" id="password" )
             input.btn.btn-success(type="submit" value="ログイン" id="loginButton" onclick="disableButton(this);")
-      -var isErrorExist = (error && error.length !== 0)
-      if isErrorExist
-        div.alert.alert-danger 
-          #{error}
+
+      
 
     include ../_share/javascripts.pug

@@ -9,34 +9,48 @@ html(lang="en")
     div
       include _share/navbar.pug
 
-    div(class="container")
+    main(class="container")
       a.btn.btn-success.my-4(data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse" id="room-info" ) 部屋情報
       div.collapse.show#collapse
         table.my-3.table.table-bordered(class="confirm-table")
           tr
             td 部屋名
-            td #{room.roomName}
+            td.td-value.td-room-name #{room.roomName}
           tr
             td ルームID
-            td #{room.roomId}
+            td.td-value #{room.roomId}
           tr
             td ルームパスワード
-            td #{room.roomPassword}
+            td.td-value #{room.roomPassword}
 
-    
-    div(id="messages" class="items" )
+    div(id="messages" class="items")
       if messages
         each message in messages
-          div(class="item")
-            p(class="message") #{message.message}
-            p #{message.createdDate}
-    
-    form(id="messageform" )
-      textarea(name="message" id="message" cols="40" rows="4")
-      button(
-        type="submit"
-        data-room-id=room.roomId
-      )#message-send-button.btn.btn-primary 送信
+          div(class="item" align="center" id=`${message.messageId}` )
+            div.item-message
+              p.item-message-value #{message.message}
+            div.mb-2.message-data
+              span.mr-3.item-createdBy #{message.createdBy}
+              span.mr-3.item-createdDate #{message.createdDate}
+              - var isMessageCreatedUser = user ? (user.username === message.createdBy) : (guestUser === message.createdBy) 
+              if isMessageCreatedUser
+                form(action=`/rooms/room?roomId=${room.roomId}` class="message-delete-form" )
+                  button.btn(type="submit" 
+                  class="delete-message-button" 
+                  style="display:inline;"
+                  data-message-id=message.messageId
+                  data-room-id=room.roomId
+                  )
+                    span.button-icon
+                      i(class="fas fa-trash-alt ")
+    div(class="container")
+      form.mb-3.mt-2(id="messageform" )
+        input.mr-2(type="text" name="message" id="message" class="message-input" )
+        button(
+          type="submit"
+          data-room-id=room.roomId
+          data-username=user ? user.username : guestUser
+        )#message-send-button.btn.btn-primary 送信
       
   script(src="/socket.io/socket.io.js")
   include _share/javascripts.pug

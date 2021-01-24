@@ -7,46 +7,51 @@ html(lang="ja")
     title chat-storm
   body
     include _share/navbar.pug
-
+    
     main(role="main" class="container")
-      div
-        p #{info}
-      div
-        p #{success}
+      
+      - var isInfoExist = (info && info.length !== 0)
+      if isInfoExist
+        div.alert.alert-info.mt-3
+          b #{info}
+      - var isSuccessExist = (success && success.length !== 0)
+      if isSuccessExist
+        div.alert.alert-success.mt-3
+          b #{success}
       - var isErrorExist = (errors && errors.length !== 0)
       if isErrorExist
-        div
+        div.alert.alert-danger.mt-3
           each error in errors
-            p #{(JSON.stringify(error)).replace(/"/g, '')}
+            i(class="fas fa-exclamation-circle")
+            b #{(JSON.stringify(error)).replace(/"/g, '')}
 
-      div.card.my-5.bg-transparent.border-primary.mb-3
-        h4.card-header.border-primary ルームIDとパスワード入室する
-        form(action="/confirm", method="post")
-          div.card-body
+      div.card.my-5.bg-transparent.mb-3
+        div.card-body
+          h4 ルームIDとパスワード入室する
+          form(action="/confirm", method="post")
             div.form-group.row
               div.col-sm-3
               label.col-sm-2.col-form-label(for="roomId") ルームID :
-              input.col-sm-4.form-control(type="text" name="roomId" id="roomId" )
+              input.col-sm-4.form-control(type="text" name="roomId" id="roomId" maxlength=8)
             div.form-group.row
               div.col-sm-3
               label.col-sm-2.col-form-label(for="roomPassword" ) ルームパスワード :
-              input.col-sm-4.form-control(type="text" name="roomPassword" id="roomPassword" )
-            button.btn.btn-outline-primary.my-2.my-sm-2(type="submit" onclick="disableButton(this);") 入室する
+              input.col-sm-4.form-control(type="text" name="roomPassword" id="roomPassword" maxlength=8)
+            button.btn.btn-primary.my-2.my-sm-2(type="submit" onclick="disableButton(this);") 入室する
 
-      div.card.my-5.bg-transparent.border-danger
-        div.card-header.border-danger
+      div.card.my-5.bg-transparent
+        div.card-body
           h4 部屋を新規作成する
           h5 (IDとパスワードが発行されます)
-        form(action="/newroom", method="post")
-          div.card-body
+          form(action="/newroom", method="post")
             div.form-group.row
               div.col-sm-3
-              label.mb-2.col-form-label(for="roomName") 部屋名:
-              input.form-control.col-4.ml-3(type="text" name="roomName" id="roomName" )
-            div
-              label(for="flexSwitchCheckDefault") 部屋を公開する:　
-              input(type="checkbox" name="isPublic")
-            button.btn.btn-outline-danger.my-2.my-sm-2(type="submit" onclick="disableButton(this);" ) 部屋を作成する
+              label.col-sm-2.col-form-label(for="roomName") 部屋名:
+              input.col-sm-4.form-control(type="text" name="roomName" id="roomName" maxlength=50 )
+            div.custom-control.custom-switch
+              input.custom-control-input(type="checkbox" name="isPublic" id="customSwitch")
+              label.custom-control-label(for="customSwitch") 部屋を公開する
+            button.btn.btn-danger.my-2.my-sm-2(type="submit" onclick="disableButton(this);" ) 部屋を作成する
 
         
     include _share/javascripts.pug

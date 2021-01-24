@@ -8,19 +8,25 @@ html(lang="ja")
   body
     include ../_share/navbar.pug
 
-    p #{error}
-
-    h3.my-3 アカウントの編集
-    div.form-group.raw
-      label(for="username").col-3 ユーザー名
-      p.col-4 #{user.username}
-    div.form-group.raw
-      label(for="userId").col-3 ユーザーID
-      p.col-4 #{user.userId}
-
-    form(method="post" action=`/account/${user.userId}?delete=1`)
-      button(type="submit" onClick="return confirmButton()").btn.btn-danger アカウントを消去する
 
     main(role="main" class="container")
+      -var isErrorExist = (error && error.length !== 0)
+      if isErrorExist
+        div.alert.alert-danger.mt-5
+          i(class="fas fa-exclamation-circle")
+          b #{error}
+
+      h3.my-5 アカウント設定
+      div.form-group.row(style="font-size:20px;")
+        div.col-sm-3
+        label(for="username").col-2 ユーザー名
+        input.form-control-plaintext.col-sm-3(type="text" readonly style="color:#f0eee9; text-align:center;" name="username" value=user.username) 
+      div.form-group.row(style="font-size:20px;")
+        div.col-sm-3
+        label(for="userId").col-2 ユーザーID
+        input.form-control-plaintext.col-sm-3(type="text" readonly style="color:#f0eee9; text-align:center;" name="userId" value=user.userId) 
+
+      form(method="post" action=`/account/${user.userId}?delete=1`)
+        button(type="submit" onClick="return confirmButton()").btn.btn-danger.mt-5 アカウントを消去する
 
     include ../_share/javascripts.pug
