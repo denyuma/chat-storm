@@ -15,7 +15,7 @@ const flash = require('connect-flash');
 const passport = require('passport');
 
 const systemLogger = require('./lib/log/systemLogger.js');
-const accessLogger = require('./lib/log/accessLogger.js');
+// const accessLogger = require('./lib/log/accessLogger.js');
 
 const accountcontrol = require('./lib/security/accountcontrol.js');
 const { SESSION_SECRET } = require('./config/app.config.js').security;
@@ -58,7 +58,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(accessLogger());
+// app.use(accessLogger());
 
 /**
  * rooting 
@@ -71,24 +71,6 @@ app.use('/confirm', require('./routes/confirm.js'));
 app.use('/account', require('./routes/account.js'));
 
 app.use(systemLogger());
-
-// app.use((_req, _res, next) => {
-//   next(createError(404));
-// });
-
-// app.use((err, req, res, next) => {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
-
-/**
- * res.statusが404と500の時のエラーページの表示
- */
 
 app.use((req, res, next) => {
   const errorData = {
