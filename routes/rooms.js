@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const csrf = require('csrf');
 const tokens = new csrf();
-const uuid = require('uuid');
 const { decryptString } = require('../lib/security/encrypt.js');
 const { MAX_ITEM_PER_PAGE } = require('../config/app.config.js').search;
 
@@ -110,7 +109,7 @@ router.get('/room', (req, res, next) => {
 });
 
 router.post('/room', (req, res, next) => {
-  const roomId = req.query.roomId || req.body.roomId;
+  const roomId = req.query.roomId;
   // 部屋作成時と入室時tokenが違うかった場合Errorを出す。
   const secret = req.session._csrf;
   const token = req.cookies._csrf;

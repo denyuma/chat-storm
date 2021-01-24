@@ -1,0 +1,7 @@
+{
+  "name": "chat-storm",
+  "description": "sortできるchatアプリケーション",
+  "logo": "",
+  "keywords": ["node"],
+  "image": "heroku/nodejs"
+}
