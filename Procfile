@@ -1,1 +1,1 @@
-web: node ./bin/www.js
+web: PORT=8000 yarn start
