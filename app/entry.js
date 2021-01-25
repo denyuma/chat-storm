@@ -82,7 +82,7 @@ $messageform.on('submit', (e) => {
 });
 
 
-//エスケープ処理
+//エスケープ処理を行う
 function escape(str){
   str = str.replace(/&/g, '&amp;');
   str = str.replace(/>/g, '&gt;');

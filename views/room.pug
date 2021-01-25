@@ -28,7 +28,7 @@ html(lang="en")
         each message in messages
           div(class="item" align="center" data=`${message.messageId}` )
             div.item-message
-              i.item-message-value #{message.message}
+              p.item-message-value #{message.message}
             div.mb-2.message-data
               span.mr-3.item-createdBy #{message.createdBy}
               span.mr-3.item-createdDate #{message.createdDate}
