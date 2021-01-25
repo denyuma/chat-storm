@@ -46,7 +46,7 @@ $('#message-send-button').each((i, e) => {
       return -1;
     }
 
-    // メッセージがpostされた時間を設定
+    // メッセージが送信された時間を設定
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1);

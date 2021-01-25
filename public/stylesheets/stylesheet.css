@@ -76,6 +76,7 @@ body {
 .item-message {
   display: inline-block;
   text-align: left;
+  word-break: break-all;
 }
 
 .item-createdBy {
