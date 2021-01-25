@@ -109,7 +109,7 @@ router.get('/room', (req, res, next) => {
 });
 
 router.post('/room', (req, res, next) => {
-  const roomId = req.query.roomId;
+  const roomId = req.body.roomId;
   // 部屋作成時と入室時tokenが違うかった場合Errorを出す。
   const secret = req.session._csrf;
   const token = req.cookies._csrf;
@@ -117,7 +117,7 @@ router.post('/room', (req, res, next) => {
   if (tokens.verify(secret, token) === false) {
     throw new Error('Invalid Token');
   }
-
+  
   res.redirect(`/rooms/room?roomId=${roomId}`);
 });
 
