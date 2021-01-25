@@ -30,10 +30,11 @@ html(lang="ja")
             th message
             td
               span #{errorData.message}
-          tr
-            th stack
-            td(style="text-align: initial;")
-              span #{errorData.stack}
+          if req.user.username === admin
+            tr
+              th stack
+              td(style="text-align: initial;")
+                span #{errorData.stack}
             
         a(href="/" onclick="disableButton(this);").btn.btn-secondary ホームへ戻る
         

@@ -42,6 +42,7 @@ router.get('/', (req, res, next) => {
   });
 });
 
+
 router.post('/', (req, res, next) => {
   MongoClient.connect(CONNECTION_URL, OPTIONS, (error, client) => {
     const db = client.db(DATABASE);

@@ -26,31 +26,22 @@ html(lang="en")
     div(id="messages" class="items")
       if messages
         each message in messages
-          div(class="item" align="center" id=`${message.messageId}` )
+          div(class="item" align="center" data=`${message.messageId}` )
             div.item-message
-              p.item-message-value #{message.message}
+              i.item-message-value #{message.message}
             div.mb-2.message-data
               span.mr-3.item-createdBy #{message.createdBy}
               span.mr-3.item-createdDate #{message.createdDate}
               - var isMessageCreatedUser = user ? (user.username === message.createdBy) : (guestUser === message.createdBy) 
-              if isMessageCreatedUser
-                form(action=`/rooms/room?roomId=${room.roomId}` class="message-delete-form" )
-                  button.btn(type="submit" 
-                  class="delete-message-button" 
-                  style="display:inline;"
-                  data-message-id=message.messageId
-                  data-room-id=room.roomId
-                  )
-                    span.button-icon
-                      i(class="fas fa-trash-alt ")
+
     div(class="container")
-      form.mb-3.mt-2(id="messageform" )
+      form(id="message-form").message-form-wrapper
         input.mr-2(type="text" name="message" id="message" class="message-input" )
         button(
           type="submit"
           data-room-id=room.roomId
           data-username=user ? user.username : guestUser
         )#message-send-button.btn.btn-primary 送信
-      
+        
   script(src="/socket.io/socket.io.js")
   include _share/javascripts.pug

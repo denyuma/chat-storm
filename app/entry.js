@@ -15,10 +15,8 @@ new Sortable(messages, {
 // メッセージをpostする
 const socket = io();
 const $messages = $('#messages');
-const $messageform = $('#messageform');
 const $message = $('#message');
-
-const $messageDeleteForm = $('.message-delete-form');
+const $messageform = $('#message-form');
 
 // postされたときの設定
 socket.on('post', (post) => {
@@ -30,18 +28,9 @@ socket.on('post', (post) => {
         <div class="message-data mb-2">
           <span class="item-createdBy mr-3" >${post.username}</span>
           <span class="item-createdDate mr-3 " >${post.createdDate}</span>
-          <form action="/rooms/room?roomId=${post.roomId}"  class="message-delete-form">
-            <button type="submit" class="btn delete-message-button" style="display:inline;" data-message-id=${post.messageId} data-room-id=${post.roomId}>
-              <span class="button-icon"> <i class="fas fa-trash-alt" > </i> </span> 
-            </button>
-          </form>
         </div>
       </div>`;
   $messages.append(text);
-});
-
-socket.on('delete-message', (messageId) => {
-  $(`#${messageId}`).remove();
 });
 
 $('#message-send-button').each((i, e) => {
@@ -52,12 +41,12 @@ $('#message-send-button').each((i, e) => {
     const messageId = createUuid();
     const username = button.data('username');
 
-    const message = $message.val();
+    const message = escape($message.val());
     if (!message) { //入力欄が空の時何もしない
       return -1;
     }
 
-    // メッセージがpostされた時間を設定
+    // メッセージが送信された時間を設定
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1);
@@ -88,25 +77,18 @@ $('#message-send-button').each((i, e) => {
   });
 });
 
-$('.delete-message-button').each((i, e) => {
-  const button = $(e);
-  button.on('click', () => {
-    const messageId = button.data('message-id');
-    const roomId = button.data('room-id');
-
-    socket.emit('delete-message', messageId);
-
-    $.post(`/rooms/room/${roomId}/post?delete=1`, {
-      roomId: roomId,
-      messageId: messageId
-    });
-  });
-});
-
 $messageform.on('submit', (e) => {
   e.preventDefault();
 });
 
-$messageDeleteForm.on('submit', (e) => {
-  e.preventDefault();
-});
+
+//エスケープ処理
+function escape(str){
+  str = str.replace(/&/g, '&amp;');
+  str = str.replace(/>/g, '&gt;');
+  str = str.replace(/</g, '&lt;');
+  str = str.replace(/"/g, '&quot;');
+  str = str.replace(/'/g, '&#x27;');
+  str = str.replace(/`/g, '&#x60;');
+  return str;
+};

@@ -60,6 +60,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   margin-left: 2%;
+  margin-bottom: 5%;
 }
 
 .item {
@@ -75,6 +76,7 @@ body {
 .item-message {
   display: inline-block;
   text-align: left;
+  word-break: break-all;
 }
 
 .item-createdBy {
@@ -96,7 +98,7 @@ body {
   font-size: large;
 }
 
-#messageform {
+.message-form-wrapper {
   position: fixed;
   bottom: 0;
   left: 0;
