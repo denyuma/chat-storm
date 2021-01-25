@@ -7,6 +7,3 @@
 - mongodb
 
 web上でbrainstormingができるサイト
-
-
-

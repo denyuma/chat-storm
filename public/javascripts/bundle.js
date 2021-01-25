@@ -130,7 +130,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(funct
     if (!message) {
       //入力欄が空の時何もしない
       return -1;
-    } // メッセージがpostされた時間を設定
+    } // メッセージが送信された時間を設定
 
 
     var date = new Date();
@@ -159,7 +159,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(funct
 });
 $messageform.on('submit', function (e) {
   e.preventDefault();
-}); //エスケープ処理
+}); //エスケープ処理を行う
 
 function escape(str) {
   str = str.replace(/&/g, '&amp;');
