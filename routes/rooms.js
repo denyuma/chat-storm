@@ -109,7 +109,7 @@ router.get('/room', (req, res, next) => {
 });
 
 router.post('/room', (req, res, next) => {
-  const roomId = req.body.roomId;
+  const roomId = req.query.roomId;
   // 部屋作成時と入室時tokenが違うかった場合Errorを出す。
   const secret = req.session._csrf;
   const token = req.cookies._csrf;

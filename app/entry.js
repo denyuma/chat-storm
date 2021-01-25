@@ -31,6 +31,7 @@ socket.on('post', (post) => {
       </div>`;
   $messages.append(text);
 });
+
 $('#message-send-button').each((i, e) => {
   const button = $(e);
 

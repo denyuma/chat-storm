@@ -23,8 +23,7 @@ html(lang="ja")
           td.td-value #{room.roomPassword}
       div(style="display:flex; justify-content:center;")
         a(href="/" ).btn.btn-primary.mr-5 戻る
-        form(action="/rooms/room", method="post" )
-          input(type="hidden" name="roomId" value=room.roomId )
+        form(action=`/rooms/room?roomId=${room.roomId}`, method="post" )
           input.btn.btn-success(type="submit", value="入室する")
         
       include _share/javascripts.pug
