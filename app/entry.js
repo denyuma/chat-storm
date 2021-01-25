@@ -41,7 +41,7 @@ $('#message-send-button').each((i, e) => {
     const messageId = createUuid();
     const username = button.data('username');
 
-    const message = $message.val();
+    const message = escape($message.val());
     if (!message) { //入力欄が空の時何もしない
       return -1;
     }
@@ -80,3 +80,15 @@ $('#message-send-button').each((i, e) => {
 $messageform.on('submit', (e) => {
   e.preventDefault();
 });
+
+
+//エスケープ処理
+function escape(str){
+  str = str.replace(/&/g, '&amp;');
+  str = str.replace(/>/g, '&gt;');
+  str = str.replace(/</g, '&lt;');
+  str = str.replace(/"/g, '&quot;');
+  str = str.replace(/'/g, '&#x27;');
+  str = str.replace(/`/g, '&#x60;');
+  return str;
+};

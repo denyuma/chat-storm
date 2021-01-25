@@ -125,7 +125,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(funct
     var roomId = button.data('room-id');
     var messageId = createUuid();
     var username = button.data('username');
-    var message = $message.val();
+    var message = escape($message.val());
 
     if (!message) {
       //入力欄が空の時何もしない
@@ -159,7 +159,19 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#message-send-button').each(funct
 });
 $messageform.on('submit', function (e) {
   e.preventDefault();
-});
+}); //エスケープ処理
+
+function escape(str) {
+  str = str.replace(/&/g, '&amp;');
+  str = str.replace(/>/g, '&gt;');
+  str = str.replace(/</g, '&lt;');
+  str = str.replace(/"/g, '&quot;');
+  str = str.replace(/'/g, '&#x27;');
+  str = str.replace(/`/g, '&#x60;');
+  return str;
+}
+
+;
 
 /***/ }),
 /* 1 */
