@@ -16,6 +16,7 @@ new Sortable(messages, {
 const socket = io();
 const $messages = $('#messages');
 const $message = $('#message');
+const $messageform = $('#message-form');
 
 // postされたときの設定
 socket.on('post', (post) => {
@@ -74,4 +75,8 @@ $('#message-send-button').each((i, e) => {
 
     $message.val('');
   });
+});
+
+$messageform.on('submit', (e) => {
+  e.preventDefault();
 });

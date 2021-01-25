@@ -35,7 +35,7 @@ html(lang="en")
               - var isMessageCreatedUser = user ? (user.username === message.createdBy) : (guestUser === message.createdBy) 
 
     div(class="container")
-      form.message-form-wrapper
+      form(id="message-form").message-form-wrapper
         input.mr-2(type="text" name="message" id="message" class="message-input" )
         button(
           type="submit"
